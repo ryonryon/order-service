@@ -17,7 +17,7 @@ Order records should include the following attributes:
 - Date order placed
 - Order status
 
-** For the purposes of this exercise, there are some design and implementation details that are intentionally left out. ** You should decide what to do in these cases, and be prepared to explain why you made these decisions during the interview.
+**For the purposes of this exercise, there are some design and implementation details that are intentionally left out.** You should decide what to do in these cases, and be prepared to explain why you made these decisions during the interview.
 
 ### Requirements
 
