@@ -1,6 +1,6 @@
 # Simple Order Service
 
-### Overview
+## Overview
 
 Treez is building a service that allows customers to place orders via a REST API. We would like to be able to model the current inventory, deducting from inventory as orders are created, and adding inventory back if orders are canceled.
 
@@ -19,7 +19,7 @@ Order records should include the following attributes:
 
 **For the purposes of this exercise, there are some design and implementation details that are intentionally left out.** You should decide what to do in these cases, and be prepared to explain why you made these decisions during the interview.
 
-### Requirements
+## Requirements
 
 The service should include the following:
 
@@ -38,7 +38,7 @@ For your implementation:
 - Database: you can choose any database you prefer
 - Framework: you can choose any framework (or none at all)
 
-### Deliverables
+## Deliverables
 
 Please send us the code that you develop so we can review what you’ve written. We will be evaluating you on the following, in approximate order:
 
@@ -50,7 +50,7 @@ Please include high-level installation instructions. Your code should cleanly co
 
 ER diagrams and similar design elements are not required. Your code should make it sufficiently clear how models are defined and related.
 
-### Expected request endpoints
+## Expected request endpoints
 
 1. Create inventory item
    - POST http://localhost:3000/inventories
