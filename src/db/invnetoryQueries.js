@@ -1,4 +1,5 @@
-// inventory
+import { makeUpdateItemSyntax } from "./utils";
+
 export const createInvntoryTable = () =>
   `
   CREATE TABLE IF NOT EXISTS inventory 

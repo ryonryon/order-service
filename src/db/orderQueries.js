@@ -1,3 +1,5 @@
+import { makeUpdateItemSyntax } from "./utils";
+
 export const createOrderTable = () =>
   `
   CREATE TABLE IF NOT EXISTS order 
@@ -49,17 +51,3 @@ export const updateOrder = (
 };
 
 export const deleteOrder = id => `DELETE FROM order WHERE order_if = ${id}`;
-
-const makeUpdateItemSyntax = items => {
-  return items
-    .filter(i => {
-      const [_, value] = i;
-      return value !== null;
-    })
-    .reduce((merged, item) => {
-      const [name, value] = item;
-      if (typeof value === "string") return `${merged},${name} = "${value}"`;
-      return `${merged},${name} = ${value}`;
-    }, "")
-    .substring(1);
-};

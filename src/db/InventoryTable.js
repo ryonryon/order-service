@@ -7,7 +7,7 @@ import {
   deleteInventoryItem,
   updateInventoryItem,
   selectInventoryItem
-} from "./sqlQueries";
+} from "./invnetoryQueries";
 
 class InventoryTable {
   static async createInventory(name, description, price, quantity_available) {
@@ -20,29 +20,29 @@ class InventoryTable {
     });
   }
 
-  static async getInventories() {
+  static getInventories() {
     const db = new DBCommon();
     return new Promise((resolve, reject) =>
       db.all(selectInventoryItems(), (err, rows) =>
-        !err ? resolve(rows) : reject(err)
+        err ? reject(err) : resolve(rows)
       )
     );
   }
 
-  static async getInventory(id) {
+  static getInventory(id) {
     const db = new DBCommon();
     return new Promise((resolve, reject) =>
       db.get(selectInventoryItem(id), (err, row) =>
-        !err ? resolve(row) : reject(err)
+        err ? reject(err) : resolve(row)
       )
     );
   }
 
-  static async deleteInventry(id) {
+  static deleteInventry(id) {
     const db = new DBCommon();
     return new Promise((resolve, reject) =>
       db.run(deleteInventoryItem(id), (err, _) =>
-        !err ? resolve() : reject(err)
+        err ? reject(err) : resolve()
       )
     );
   }
