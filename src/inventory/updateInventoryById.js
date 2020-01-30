@@ -1,4 +1,5 @@
 import InventoryTable from "../db/InventoryTable";
+import { CONNECTION_ERROR, INVALID_PARAM_ERROR } from "../constants";
 
 async function updateInventoryById(req, res) {
   const inventoryId = req.params.id;
@@ -8,16 +9,28 @@ async function updateInventoryById(req, res) {
   const quantityAvailable = req.body["quantity_available"];
   try {
     if (undefined === (await InventoryTable.getInventory(inventoryId)))
-      throw new Error(`Inventory Id: ${inventoryId} doesn't exist.`);
+      throw INVALID_PARAM_ERROR.type;
 
     if (typeof name !== "string")
-      throw new Error("Name has to be 'string' type.");
+      throw { error_type: VALIDATION_ERROR.type, name: "name", type: "string" };
     if (typeof description !== "string")
-      throw new Error("Description has to be 'string' type.");
+      throw {
+        error_type: VALIDATION_ERROR.type,
+        name: "description",
+        type: "string"
+      };
     if (typeof price !== "number")
-      throw new Error("Price has to be 'number' type.");
+      throw {
+        error_type: VALIDATION_ERROR.type,
+        name: "price",
+        type: "number"
+      };
     if (typeof quantityAvailable !== "number")
-      throw new Error("Quantity available has to be 'number' type.");
+      throw {
+        error_type: VALIDATION_ERROR.type,
+        name: "quantity_available",
+        type: "number"
+      };
 
     await InventoryTable.updateInventory(
       inventoryId,
@@ -28,7 +41,13 @@ async function updateInventoryById(req, res) {
     );
     res.send("The inventory is successfully updated");
   } catch (err) {
-    res.status(400).send(`${err}`);
+    if (err === INVALID_PARAM_ERROR.type)
+      res.status(400).send(INVALID_PARAM_ERROR.message(inventoryId));
+
+    if (err.error_type === VALIDATION_ERROR.type)
+      res.status(400).send(VALIDATION_ERROR.message(err.name, err.type));
+
+    res.status(400).send(CONNECTION_ERROR.message());
   }
 }
 

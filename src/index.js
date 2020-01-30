@@ -9,6 +9,4 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/inventories", InventoryRoute);
 
-export const server = app.listen("3000", () =>
-  console.log("I'm listening on port: 3000")
-);
+export default app;

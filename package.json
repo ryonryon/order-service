@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.js",
-    "test": "jest"
+    "start": "nodemon --exec babel-node src/server.js",
+    "test": "jest --config ./jest.config.js --forceExit --coverage --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -14,12 +14,13 @@
     "express": "^4.17.1",
     "jest": "^24.9.0",
     "nodemon": "^2.0.2",
-    "sqlite3": "^4.1.1",
-    "supertest": "^4.0.2"
+    "sqlite3": "^4.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
     "@babel/node": "^7.8.3",
-    "@babel/preset-env": "^7.8.3"
+    "@babel/preset-env": "^7.8.3",
+    "babel-jest": "^25.1.0",
+    "supertest": "^4.0.2"
   }
 }

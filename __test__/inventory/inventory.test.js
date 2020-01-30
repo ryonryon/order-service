@@ -1,16 +1,9 @@
-import request from "supertest";
-
-import { server } from "../../src/index";
+import createInvnetoryTest from "./createInventory.test";
+import readInventoriesTest from "./readInventories.test";
 
 function inventoryTest() {
-  describe("Read all inventory items", () => {
-    test("#1", () => {
-      request(server)
-        .get("/inventories")
-        .expect("Content-Type", /json/)
-        .expect(200);
-    });
-  });
+  createInvnetoryTest();
+  readInventoriesTest();
 }
 
 export default inventoryTest;
