@@ -2,7 +2,7 @@ import sqlite3 from "sqlite3";
 
 let database = null;
 
-class DBCommon {
+class DBSqlite3 {
   constructor() {
     if (!database) {
       database = new sqlite3.Database(
@@ -12,12 +12,6 @@ class DBCommon {
     }
     return database;
   }
-
-  close() {
-    if (database) {
-      database.close();
-    }
-  }
 }
 
-export default DBCommon;
+export default DBSqlite3;
