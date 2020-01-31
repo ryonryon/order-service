@@ -1,4 +1,4 @@
-import DBCommon from "./DBCommon";
+import DBSqlite3 from "./dbSqlite3";
 
 import {
   createInvntoryTable,
@@ -11,7 +11,7 @@ import {
 
 class InventoryTable {
   static async createInventory(name, description, price, quantity_available) {
-    const db = new DBCommon();
+    const db = new DBSqlite3();
     await db.serialize(async () => {
       await db.run(createInvntoryTable());
       await db.run(
@@ -21,7 +21,7 @@ class InventoryTable {
   }
 
   static getInventories() {
-    const db = new DBCommon();
+    const db = new DBSqlite3();
     return new Promise((resolve, reject) =>
       db.all(selectInventoryItems(), (err, rows) =>
         err ? reject(err) : resolve(rows)
@@ -30,7 +30,7 @@ class InventoryTable {
   }
 
   static getInventory(id) {
-    const db = new DBCommon();
+    const db = new DBSqlite3();
     return new Promise((resolve, reject) =>
       db.get(selectInventoryItem(id), (err, row) =>
         err ? reject(err) : resolve(row)
@@ -39,7 +39,7 @@ class InventoryTable {
   }
 
   static deleteInventry(id) {
-    const db = new DBCommon();
+    const db = new DBSqlite3();
     return new Promise((resolve, reject) =>
       db.run(deleteInventoryItem(id), (err, _) =>
         err ? reject(err) : resolve()
@@ -54,7 +54,7 @@ class InventoryTable {
     price = null,
     quantity_available = null
   ) {
-    const db = new DBCommon();
+    const db = new DBSqlite3();
     return await db.serialize(async () => {
       console.log(
         updateInventoryItem(id, name, description, price, quantity_available)

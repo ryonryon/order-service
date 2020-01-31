@@ -1,16 +1,7 @@
 import { makeUpdateItemSyntax } from "./utils";
 
 export const createInvntoryTable = () =>
-  `
-  CREATE TABLE IF NOT EXISTS inventory 
-    (
-      inventory_id INTEGER PRIMARY KEY AUTOINCREMENT
-      , name TEXT
-      , description TEXT
-      , price INTEGER
-      , quantity_available INTEGER
-    )
-  `;
+  "CREATE TABLE IF NOT EXISTS inventory (inventory_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price INTEGER, quantity_available INTEGER)";
 
 export const insertInventoryItem = (
   name,
@@ -48,4 +39,4 @@ export const deleteInventoryItem = id =>
   `DELETE FROM inventory WHERE inventory_id = ${id}`;
 
 export const getInventoryItemAvarability = (name, quantity) =>
-  `SELECT count(*) FROM inventory WHERE name = "${name}" AND "${quantity}" <= quantity_available`;
+  `SELECT count(*) FROM inventory WHERE name = "${name}" AND ${quantity} <= quantity_available`;
