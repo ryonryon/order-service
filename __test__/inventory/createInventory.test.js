@@ -15,9 +15,7 @@ function createInventryText() {
         });
 
       expect(res.status).toBe(200);
-      expect(res.header["content-type"]).toBe(
-        "application/json; charset=utf-8"
-      );
+      expect(res.header["content-type"]).toBe("text/html; charset=utf-8");
     });
   });
 }

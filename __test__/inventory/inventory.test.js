@@ -1,9 +1,9 @@
 import createInvnetoryTest from "./createInventory.test";
-import readInventoriesTest from "./readInventories.test";
+import getInventoriesTest from "./getInventories.test";
 
 function inventoryTest() {
   createInvnetoryTest();
-  readInventoriesTest();
+  getInventoriesTest();
 }
 
 export default inventoryTest;
