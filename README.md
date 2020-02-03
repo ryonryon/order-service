@@ -1,4 +1,4 @@
-# Simple Order Service
+# Order Service
 
 ## Overview
 
