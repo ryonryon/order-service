@@ -2,7 +2,7 @@
 
 ## Overview
 
-Treez is building a service that allows customers to place orders via a REST API. We would like to be able to model the current inventory, deducting from inventory as orders are created, and adding inventory back if orders are canceled.
+The company is building a service that allows customers to place orders via a REST API. We would like to be able to model the current inventory, deducting from inventory as orders are created, and adding inventory back if orders are canceled.
 
 Inventory records should include the following attributes:
 
@@ -17,8 +17,6 @@ Order records should include the following attributes:
 - Date order placed
 - Order status
 
-**For the purposes of this exercise, there are some design and implementation details that are intentionally left out.** You should decide what to do in these cases, and be prepared to explain why you made these decisions during the interview.
-
 ## Requirements
 
 The service should include the following:
@@ -31,24 +29,6 @@ The service should include the following:
 3. Tests should be included for both the inventory and order endpoints
 4. Authorization/authentication is NOT required for this service. It is safe to assume that all calls to the service should be processed
 5. Database models should be created based on your assessment of what’s necessary for the service. At minimum, you’ll likely want a model for inventory and a model for orders; you may choose to include additional models as necessary.
-
-For your implementation:
-
-- Language: you can choose any language you would like to implement the service, though Java, Javascript, or Typescript are preferred.
-- Database: you can choose any database you prefer
-- Framework: you can choose any framework (or none at all)
-
-## Deliverables
-
-Please send us the code that you develop so we can review what you’ve written. We will be evaluating you on the following, in approximate order:
-
-1. Correctness
-2. Cleanliness and clarity
-3. Efficiency
-
-Please include high-level installation instructions. Your code should cleanly compile, tests should run without failures, and we should be able to make requests against your service.
-
-ER diagrams and similar design elements are not required. Your code should make it sufficiently clear how models are defined and related.
 
 ## Expected request endpoints
 
