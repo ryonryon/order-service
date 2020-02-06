@@ -6,10 +6,8 @@ export const createOrderTable = () =>
 export const insertOrder = (customerEmailAddress: string, dateOrderPlaced: string, orderStatus: string) =>
   `INSERT INTO orders (customer_email_address, date_order_placed, order_status) VALUES ("${customerEmailAddress}", "${dateOrderPlaced}", "${orderStatus}");`;
 
-export const insertOrderDetail = ({ orderId, inventoryId, quantity }) =>
-  `INSERT INTO orders_detail (order_id, inventory_id, quantity) VALUES ("${orderId}", "${inventoryId}", "${quantity}");`;
-
-export const selectOrders = (): string => `SELECT * FROM orders;`;
+export const selectOrders = (): string =>
+  `SELECT orders.*, orders_detail.* FROM orders INNER JOIN orders_detail ON orders.order_id = orders_detail.order_id;`;
 
 export const selectOrder = (id: Number): string => `SELECT * FROM orders WHERE order_id = ${id};`;
 

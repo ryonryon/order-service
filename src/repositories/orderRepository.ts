@@ -16,9 +16,9 @@ import InventoryQuantity from "../entities/inventoryQuantity";
 
 class OrderTable {
   static createOrder(
-    customerEmailAddress: String,
-    dateOrderPlaced: String,
-    orderStatus: String,
+    customerEmailAddress: string,
+    dateOrderPlaced: string,
+    orderStatus: string,
     orderItems: InventoryQuantity[]
   ) {
     const db = dBSqlite3();
@@ -42,7 +42,11 @@ class OrderTable {
 
   static getOrders(): Promise<any> {
     const db = dBSqlite3();
-    return new Promise((resolve, reject) => db.all(selectOrders(), (err, rows) => (err ? reject(err) : resolve(rows))));
+    return new Promise((resolve, reject) =>
+      db.all(selectOrders(), (err, rows) => {
+        return err ? reject(err) : resolve(rows);
+      })
+    );
   }
 
   static getOrder(id: Number): Promise<any> {
