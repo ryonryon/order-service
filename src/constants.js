@@ -3,9 +3,20 @@ export const INVALID_PARAM_ERROR = {
   message: id => `Invalid Paramater Error: The inventory id ${id} isn't exist.`
 };
 
-export const VALIDATION_ERROR = {
-  type: "VALIDATION_ERROR",
-  message: (item, type) => `Validation Error: ${item} has to be ${type} type.`
+export const INVALID_ITEM_TYPE_ERROR = {
+  type: "INVALID_ITEM_TYPE_ERROR",
+  message: (item, type) =>
+    `Invalid item type error: ${item} has to be ${type} type.`
+};
+
+export const INVALID_EMAIL_ERROR = {
+  type: "INVALID_EMAIL_ERROR",
+  message: email => `Invalid Email Error: ${email} isn't valid`
+};
+
+export const INVALID_DATE_ERROR = {
+  type: "INVALID_DATE_ERROR",
+  message: date => `Invalid Date Error: ${date} isn't valid`
 };
 
 export const CONNECTION_ERROR = {
