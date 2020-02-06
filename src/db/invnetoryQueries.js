@@ -1,7 +1,7 @@
 import { makeUpdateItemSyntax } from "./utils";
 
 export const createInvntoryTable = () =>
-  "CREATE TABLE IF NOT EXISTS inventory (inventory_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price INTEGER, quantity_available INTEGER)";
+  "CREATE TABLE IF NOT EXISTS inventories (inventory_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price INTEGER, quantity_available INTEGER)";
 
 export const insertInventoryItem = (
   name,
@@ -9,12 +9,12 @@ export const insertInventoryItem = (
   price,
   quantity_available
 ) =>
-  `INSERT INTO inventory (name, description, price, quantity_available) VALUES ("${name}", "${description}", ${price}, ${quantity_available})`;
+  `INSERT INTO inventories (name, description, price, quantity_available) VALUES ("${name}", "${description}", ${price}, ${quantity_available});`;
 
-export const selectInventoryItems = () => `SELECT * FROM inventory`;
+export const selectInventoryItems = () => `SELECT * FROM inventories;`;
 
 export const selectInventoryItem = id =>
-  `SELECT * FROM inventory WHERE inventory_id = ${id}`;
+  `SELECT * FROM inventories WHERE inventory_id = ${id};`;
 
 export const updateInventoryItem = (
   id,
@@ -32,11 +32,11 @@ export const updateInventoryItem = (
     ["quantity_available", quantity_available]
   ]);
 
-  return `UPDATE inventory SET ${items} WHERE inventory_id = ${id}`;
+  return `UPDATE inventories SET ${items} WHERE inventory_id = ${id};`;
 };
 
 export const deleteInventoryItem = id =>
-  `DELETE FROM inventory WHERE inventory_id = ${id}`;
+  `DELETE FROM inventories WHERE inventory_id = ${id};`;
 
 export const getInventoryItemAvarability = (name, quantity) =>
-  `SELECT count(*) FROM inventory WHERE name = "${name}" AND ${quantity} <= quantity_available`;
+  `SELECT count(*) FROM inventories WHERE name = "${name}" AND ${quantity} <= quantity_available;`;
