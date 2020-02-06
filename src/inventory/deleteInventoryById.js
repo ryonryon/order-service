@@ -8,10 +8,10 @@ async function deleteInventoryById(req, res) {
 
     await InventoryTable.deleteInventry(id);
 
-    res.status(200).send("Inventory is successfully deleted.");
+    res.status(200).send("The inventory is successfully deleted.");
   } catch (err) {
     if (err === INVALID_PARAM_ERROR.type)
-      res.status(400).send(INVALID_PARAM_ERROR.message(inventryId));
+      res.status(400).send(INVALID_PARAM_ERROR.message(id));
     else res.status(500).send(INVALID_PARAM_ERROR.message());
   }
 }

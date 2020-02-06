@@ -21,7 +21,7 @@ async function createInventory(req, res) {
       quantityAvailable
     );
 
-    res.status(200).send("Inventory is successfully added.");
+    res.status(200).send("The inventory is successfully added.");
   } catch (err) {
     if (err.error_type === INVALID_ITEM_TYPE_ERROR.type)
       res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
