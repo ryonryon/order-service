@@ -3,9 +3,6 @@ import { makeUpdateItemSyntax } from "./utils";
 export const createOrderTable = () =>
   `CREATE TABLE IF NOT EXISTS orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, customer_email_address TEXT, date_order_placed TEXT, order_status TEXT);`;
 
-export const createOrderDetailTable = () =>
-  `CREATE TABLE IF NOT EXISTS orders_detail (order_id INTEGER, inventory_id INTEGER, quantity INTEGER);`;
-
 export const insertOrder = (
   customerEmailAddress,
   dateOrderPlaced,
