@@ -28,3 +28,9 @@ export const CONNECTION_ERROR = {
   message: () =>
     "Connection Error: Your request was fail due to the connection error."
 };
+
+export const AVAILABLE_QUANTITY_ERROR = {
+  type: "AVAILABLE_QUANTITY_ERROR",
+  message: id =>
+    `Available Quantity Error: Inventory id ${id} doesn't have enough quantity.`
+};
