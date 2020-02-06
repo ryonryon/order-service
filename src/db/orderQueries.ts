@@ -9,7 +9,8 @@ export const insertOrder = (customerEmailAddress: string, dateOrderPlaced: strin
 export const selectOrders = (): string =>
   `SELECT orders.*, orders_detail.* FROM orders INNER JOIN orders_detail ON orders.order_id = orders_detail.order_id;`;
 
-export const selectOrder = (id: Number): string => `SELECT * FROM orders WHERE order_id = ${id};`;
+export const selectOrder = (id: Number): string =>
+  `SELECT orders.*, orders_detail.* FROM orders INNER JOIN orders_detail ON orders.order_id = orders_detail.order_id WHERE orders.order_id = ${id};`;
 
 export const selectOrderNewest = (): string => "SELECT MAX(order_id) as order_id FROM orders";
 
