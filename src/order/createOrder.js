@@ -9,13 +9,15 @@ import { checkType, checkDate, TYPE, checkEmail } from "../validations";
 
 async function createOrder(req, res) {
   const customerEmailAddress = req.body["customer_email_address"];
-  const dateOrderPlaced = req.body["data_order_placed"];
+  const dateOrderPlaced = req.body["date_order_placed"];
   const orderStatus = req.body["order_status"];
+  const items = req.body["items"];
+  console.log(items);
 
   try {
     checkType(customerEmailAddress, "customer_email_address", TYPE.STRING);
     checkEmail(customerEmailAddress);
-    checkType(dateOrderPlaced, "data_order_placed", TYPE.STRING);
+    checkType(dateOrderPlaced, "date_order_placed", TYPE.STRING);
     checkDate(dateOrderPlaced);
     checkType(orderStatus, "order_status", TYPE.STRING);
 
