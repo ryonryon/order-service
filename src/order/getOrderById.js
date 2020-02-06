@@ -5,9 +5,7 @@ async function getOrderById(req, res) {
   const id = req.params.id;
 
   try {
-    console.log(id);
     const order = await OrderTable.getOrder(id);
-    console.log(order);
     if (order === undefined) throw INVALID_PARAM_ERROR.type;
 
     res.status(200).send(order);
