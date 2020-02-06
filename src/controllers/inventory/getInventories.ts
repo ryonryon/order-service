@@ -1,5 +1,5 @@
-import InventoryTable from "../db/InventoryTable";
-import { CONNECTION_ERROR } from "../constants";
+import InventoryTable from "../../repositories/inventoryRepository";
+import { CONNECTION_ERROR } from "../../constants";
 
 async function getInventories(_, res) {
   try {
