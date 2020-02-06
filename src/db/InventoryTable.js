@@ -38,15 +38,6 @@ class InventoryTable {
     );
   }
 
-  static deleteInventry(id) {
-    const db = new DBSqlite3();
-    return new Promise((resolve, reject) =>
-      db.run(deleteInventoryItem(id), (err, _) =>
-        err ? reject(err) : resolve()
-      )
-    );
-  }
-
   static async updateInventory(
     id,
     name = null,
@@ -56,13 +47,19 @@ class InventoryTable {
   ) {
     const db = new DBSqlite3();
     return await db.serialize(async () => {
-      console.log(
-        updateInventoryItem(id, name, description, price, quantity_available)
-      );
       await db.run(
         updateInventoryItem(id, name, description, price, quantity_available)
       );
     });
+  }
+
+  static deleteInventry(id) {
+    const db = new DBSqlite3();
+    return new Promise((resolve, reject) =>
+      db.run(deleteInventoryItem(id), (err, _) =>
+        err ? reject(err) : resolve()
+      )
+    );
   }
 }
 
