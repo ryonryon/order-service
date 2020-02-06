@@ -28,11 +28,9 @@ async function updateInventoryById(req, res) {
   } catch (err) {
     if (err === INVALID_PARAM_ERROR.type)
       res.status(400).send(INVALID_PARAM_ERROR.message(inventoryId));
-
-    if (err.error_type === INVALID_ITEM_TYPE_ERROR.type)
+    else if (err.error_type === INVALID_ITEM_TYPE_ERROR.type)
       res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
-
-    res.status(400).send(CONNECTION_ERROR.message());
+    else res.status(400).send(CONNECTION_ERROR.message());
   }
 }
 

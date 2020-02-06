@@ -1,19 +1,18 @@
 import InventoryTable from "../db/InventoryTable";
 
 async function deleteInventoryById(req, res) {
-  const inventoryId = req.params.id;
+  const id = req.params.id;
   try {
-    const inventry = await InventoryTable.getInventory(inventryId);
+    const inventry = await InventoryTable.getInventory(id);
     if (inventry === undefined) throw INVALID_PARAM_ERROR.type;
 
-    await InventoryTable.deleteInventry(inventoryId);
+    await InventoryTable.deleteInventry(id);
 
     res.status(200).send("Inventory is successfully deleted.");
   } catch (err) {
     if (err === INVALID_PARAM_ERROR.type)
       res.status(400).send(INVALID_PARAM_ERROR.message(inventryId));
-
-    res.status(500).send(INVALID_PARAM_ERROR.message());
+    else res.status(500).send(INVALID_PARAM_ERROR.message());
   }
 }
 

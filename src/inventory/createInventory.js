@@ -25,8 +25,7 @@ async function createInventory(req, res) {
   } catch (err) {
     if (err.error_type === INVALID_ITEM_TYPE_ERROR.type)
       res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
-
-    res.status(500).send(CONNECTION_ERROR.message());
+    else res.status(500).send(CONNECTION_ERROR.message());
   }
 }
 

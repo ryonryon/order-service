@@ -11,8 +11,7 @@ async function getInventoryById(req, res) {
   } catch (err) {
     if (err === INVALID_PARAM_ERROR.type)
       res.status(400).send(INVALID_PARAM_ERROR.message(inventryId));
-
-    res.status(500).send(INVALID_PARAM_ERROR.message());
+    else res.status(500).send(INVALID_PARAM_ERROR.message());
   }
 }
 
