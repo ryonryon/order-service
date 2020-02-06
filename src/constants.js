@@ -1,6 +1,10 @@
 export const INVALID_PARAM_ERROR = {
-  type: "INVALID_PARAM_ERROR",
+  type: "INVALID_INVENTORY_ID_ERROR",
   message: id => `Invalid Paramater Error: The inventory id ${id} isn't exist.`
+};
+export const INVALID_ORDER_ID_ERROR = {
+  type: "INVALID_ORDER_ID_ERROR",
+  message: id => `Invalid Paramater Error: The order id ${id} isn't exist.`
 };
 
 export const INVALID_ITEM_TYPE_ERROR = {

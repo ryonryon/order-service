@@ -1,6 +1,6 @@
 import OrderTable from "../db/orderTable";
 import {
-  INVALID_PARAM_ERROR,
+  INVALID_ORDER_ID_ERROR,
   INVALID_ITEM_TYPE_ERROR,
   INVALID_EMAIL_ERROR,
   INVALID_DATE_ERROR,
@@ -16,7 +16,7 @@ async function updateOrderById(req, res) {
 
   try {
     const order = await OrderTable.getOrder(id);
-    if (order === undefined) throw INVALID_PARAM_ERROR.type;
+    if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
 
     if (customerEmailAddress !== undefined) {
       checkType(customerEmailAddress, "customer_email_address", TYPE.STRING);
@@ -41,6 +41,8 @@ async function updateOrderById(req, res) {
 
     res.status(200).send("The order is successfully updated");
   } catch (err) {
+    if (err.error_type === INVALID_ORDER_ID_ERROR.type)
+      res.status(400).send(INVALID_ORDER_ID_ERROR.message(id));
     if (err.error_type === INVALID_ITEM_TYPE_ERROR.type)
       res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
     else if (err.error_type === INVALID_EMAIL_ERROR.type)

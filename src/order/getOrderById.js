@@ -1,19 +1,19 @@
 import OrderTable from "../db/orderTable";
-import { INVALID_PARAM_ERROR } from "../constants";
+import { INVALID_ORDER_ID_ERROR, CONNECTION_ERROR } from "../constants";
 
 async function getOrderById(req, res) {
   const id = req.params.id;
 
   try {
     const order = await OrderTable.getOrder(id);
-    if (order === undefined) throw INVALID_PARAM_ERROR.type;
+    if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
 
     res.status(200).send(order);
   } catch (err) {
-    if (err === INVALID_PARAM_ERROR.type)
-      res.status(400).send(INVALID_PARAM_ERROR.message(inventryId));
+    if (err === INVALID_ORDER_ID_ERROR.type)
+      res.status(400).send(INVALID_ORDER_ID_ERROR.message(inventryId));
 
-    res.status(500).send(INVALID_PARAM_ERROR.message());
+    res.status(500).send(CONNECTION_ERROR.message());
   }
 }
 
