@@ -1,4 +1,4 @@
-export const INVALID_PARAM_ERROR = {
+export const INVALID_INVENTORY_ID_ERROR = {
   type: "INVALID_INVENTORY_ID_ERROR",
   message: id => `Invalid Paramater Error: The inventory id ${id} isn't exist.`
 };

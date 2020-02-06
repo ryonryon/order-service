@@ -1,5 +1,5 @@
 import InventoryTable from "../db/InventoryTable";
-import { CONNECTION_ERROR, INVALID_PARAM_ERROR } from "../constants";
+import { INVALID_INVENTORY_ID_ERROR, CONNECTION_ERROR } from "../constants";
 import { checkType, TYPE } from "../validations";
 
 async function updateInventoryById(req, res) {
@@ -10,7 +10,7 @@ async function updateInventoryById(req, res) {
   const quantityAvailable = req.body["quantity_available"];
   try {
     if (undefined === (await InventoryTable.getInventory(id)))
-      throw INVALID_PARAM_ERROR.type;
+      throw INVALID_INVENTORY_ID_ERROR.type;
 
     checkType(name, "name", TYPE.STRING);
     checkType(description, "description", TYPE.STRING);
@@ -26,8 +26,8 @@ async function updateInventoryById(req, res) {
     );
     res.send("The inventory is successfully updated");
   } catch (err) {
-    if (err === INVALID_PARAM_ERROR.type)
-      res.status(400).send(INVALID_PARAM_ERROR.message(id));
+    if (err === INVALID_INVENTORY_ID_ERROR.type)
+      res.status(400).send(INVALID_INVENTORY_ID_ERROR.message(id));
     else if (err.error_type === INVALID_ITEM_TYPE_ERROR.type)
       res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
     else res.status(400).send(CONNECTION_ERROR.message());
