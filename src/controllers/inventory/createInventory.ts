@@ -15,12 +15,7 @@ async function createInventory(req, res) {
     checkType(price, "price", TYPE.NUMBER);
     checkType(quantityAvailable, "quantity_available", TYPE.NUMBER);
 
-    await InventoryTable.createInventory(
-      name,
-      description,
-      price,
-      quantityAvailable
-    );
+    InventoryTable.createInventory(name, description, price, quantityAvailable);
 
     res.status(200).send("The inventory is successfully added.");
   } catch (err) {

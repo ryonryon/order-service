@@ -1,9 +1,5 @@
 import InventoryTable from "../../repositories/inventoryRepository";
-import {
-  INVALID_ITEM_TYPE_ERROR,
-  INVALID_INVENTORY_ID_ERROR,
-  CONNECTION_ERROR
-} from "../../constants";
+import { INVALID_ITEM_TYPE_ERROR, INVALID_INVENTORY_ID_ERROR, CONNECTION_ERROR } from "../../constants";
 import { checkType, TYPE } from "../../validations";
 
 async function updateInventoryById(req, res) {
@@ -22,13 +18,7 @@ async function updateInventoryById(req, res) {
     checkType(price, "price", TYPE.NUMBER);
     checkType(quantityAvailable, "quantity_available", TYPE.NUMBER);
 
-    await InventoryTable.updateInventory(
-      id,
-      name,
-      description,
-      price,
-      quantityAvailable
-    );
+    await InventoryTable.updateInventory(id, name, description, price, quantityAvailable);
 
     res.send("The inventory is successfully updated");
   } catch (err) {
