@@ -1,5 +1,6 @@
 import InventoryTable from "../db/InventoryTable";
-import { CONNECTION_ERROR, VALIDATION_ERROR } from "../constants";
+import { CONNECTION_ERROR, INVALID_ITEM_TYPE_ERROR } from "../constants";
+import { checkType, TYPE } from "../validations";
 
 async function createInventory(req, res) {
   const name = req.body["name"];
@@ -8,26 +9,10 @@ async function createInventory(req, res) {
   const quantityAvailable = req.body["quantity_available"];
 
   try {
-    if (typeof name !== "string")
-      throw { error_type: VALIDATION_ERROR.type, name: "name", type: "string" };
-    if (typeof description !== "string")
-      throw {
-        error_type: VALIDATION_ERROR.type,
-        name: "description",
-        type: "string"
-      };
-    if (typeof price !== "number")
-      throw {
-        error_type: VALIDATION_ERROR.type,
-        name: "price",
-        type: "number"
-      };
-    if (typeof quantityAvailable !== "number")
-      throw {
-        error_type: VALIDATION_ERROR.type,
-        name: "quantity_available",
-        type: "number"
-      };
+    checkType(name, "name", TYPE.STRING);
+    checkType(description, "description", TYPE.STRING);
+    checkType(price, "price", TYPE.NUMBER);
+    checkType(quantityAvailable, "quantity_available", TYPE.NUMBER);
 
     await InventoryTable.createInventory(
       name,
@@ -38,8 +23,8 @@ async function createInventory(req, res) {
 
     res.status(200).send("Inventory is successfully added.");
   } catch (err) {
-    if (err.error_type === VALIDATION_ERROR.type)
-      res.status(400).send(VALIDATION_ERROR.message(err.name, err.type));
+    if (err.error_type === INVALID_ITEM_TYPE_ERROR.type)
+      res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
 
     res.status(500).send(CONNECTION_ERROR.message());
   }

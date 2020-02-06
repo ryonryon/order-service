@@ -1,5 +1,6 @@
 import InventoryTable from "../db/InventoryTable";
 import { CONNECTION_ERROR, INVALID_PARAM_ERROR } from "../constants";
+import { checkType, TYPE } from "../validations";
 
 async function updateInventoryById(req, res) {
   const inventoryId = req.params.id;
@@ -11,26 +12,10 @@ async function updateInventoryById(req, res) {
     if (undefined === (await InventoryTable.getInventory(inventoryId)))
       throw INVALID_PARAM_ERROR.type;
 
-    if (typeof name !== "string")
-      throw { error_type: VALIDATION_ERROR.type, name: "name", type: "string" };
-    if (typeof description !== "string")
-      throw {
-        error_type: VALIDATION_ERROR.type,
-        name: "description",
-        type: "string"
-      };
-    if (typeof price !== "number")
-      throw {
-        error_type: VALIDATION_ERROR.type,
-        name: "price",
-        type: "number"
-      };
-    if (typeof quantityAvailable !== "number")
-      throw {
-        error_type: VALIDATION_ERROR.type,
-        name: "quantity_available",
-        type: "number"
-      };
+    checkType(name, "name", TYPE.STRING);
+    checkType(description, "description", TYPE.STRING);
+    checkType(price, "price", TYPE.NUMBER);
+    checkType(quantityAvailable, "quantity_available", TYPE.NUMBER);
 
     await InventoryTable.updateInventory(
       inventoryId,
@@ -44,8 +29,8 @@ async function updateInventoryById(req, res) {
     if (err === INVALID_PARAM_ERROR.type)
       res.status(400).send(INVALID_PARAM_ERROR.message(inventoryId));
 
-    if (err.error_type === VALIDATION_ERROR.type)
-      res.status(400).send(VALIDATION_ERROR.message(err.name, err.type));
+    if (err.error_type === INVALID_ITEM_TYPE_ERROR.type)
+      res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
 
     res.status(400).send(CONNECTION_ERROR.message());
   }
