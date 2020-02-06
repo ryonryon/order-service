@@ -32,12 +32,7 @@ async function updateOrderById(req, res) {
       checkType(orderStatus, "order_status", TYPE.STRING);
     }
 
-    OrderTable.updateOrder(
-      id,
-      customerEmailAddress,
-      dateOrderPlaced,
-      orderStatus
-    );
+    await OrderTable.updateOrder(id, customerEmailAddress, dateOrderPlaced, orderStatus);
 
     res.status(200).send("The order is successfully updated");
   } catch (err) {
