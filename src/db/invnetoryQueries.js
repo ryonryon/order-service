@@ -21,15 +21,15 @@ export const updateInventoryItem = (
   name,
   description,
   price,
-  quantity_available
+  quantityAvailable
 ) => {
-  if (!name && !description && !price && !quantity_available) return null;
+  if (!name && !description && !price && !quantityAvailable) return null;
 
   const items = makeUpdateItemSyntax([
     ["name", name],
     ["description", description],
     ["price", price],
-    ["quantity_available", quantity_available]
+    ["quantity_available", quantityAvailable]
   ]);
 
   return `UPDATE inventories SET ${items} WHERE inventory_id = ${id};`;
