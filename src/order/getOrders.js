@@ -5,7 +5,7 @@ async function getOrders(_, res) {
   try {
     res.status(200).send(await OrderTable.getOrders());
   } catch (e) {
-    res.status(400).send(CONNECTION_ERROR.message());
+    res.status(500).send(CONNECTION_ERROR.message());
   }
 }
 

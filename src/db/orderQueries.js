@@ -20,7 +20,7 @@ export const selectOrders = () => `SELECT * FROM orders;`;
 
 export const selectOrder = id => `SELECT * FROM orders WHERE order_id = ${id};`;
 
-export const updateOrder = (
+export const updateOrderItem = (
   id,
   customer_email_address = null,
   date_order_placed = null,
