@@ -20,21 +20,21 @@ class OrderTable {
     dateOrderPlaced: string,
     orderStatus: string,
     orderItems: InventoryQuantity[]
-  ) {
+  ): Promise<void> {
     const db = dBSqlite3();
-    db.serialize(async () => {
-      db.run(createOrderTable());
-      db.run(createOrderDetailTable());
-      db.run(insertOrder(customerEmailAddress, dateOrderPlaced, orderStatus));
-      db.get(selectOrderNewest(), (err, row) => {
-        console.log("row");
-        console.log(row);
-        if (err) throw err;
-        orderItems.forEach(orderItem => {
-          console.log(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
-          console.log(insertOrderDetail(row["order_id"], orderItem.inventoryId, orderItem.quantity));
-          db.run(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
-          db.run(insertOrderDetail(1, orderItem.inventoryId, orderItem.quantity));
+    return new Promise((resolve, reject) => {
+      db.serialize(async () => {
+        db.run(createOrderTable());
+        db.run(createOrderDetailTable());
+        db.run(insertOrder(customerEmailAddress, dateOrderPlaced, orderStatus));
+        db.get(selectOrderNewest(), (err, row) => {
+          if (err) return reject(err);
+          orderItems.forEach(orderItem => {
+            db.run(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
+            db.run(insertOrderDetail(row["order_id"], orderItem.inventoryId, orderItem.quantity));
+
+            return resolve();
+          });
         });
       });
     });
@@ -51,7 +51,7 @@ class OrderTable {
 
   static getOrder(id: Number): Promise<any> {
     const db = dBSqlite3();
-    return new Promise((resolve, reject) => db.get(selectOrder(id), (err, row) => (err ? reject(err) : resolve(row))));
+    return new Promise((resolve, reject) => db.all(selectOrder(id), (err, row) => (err ? reject(err) : resolve(row))));
   }
 
   static updateOrder(

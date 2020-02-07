@@ -46,7 +46,7 @@ async function createOrder(req, res) {
       orderItemsUpdate.push(new InventoryQuantity(inventoryId, quantity, quantityAvailable - quantity));
     });
 
-    OrderTable.createOrder(customerEmailAddress, dateOrderPlaced, orderStatus, orderItemsUpdate);
+    await OrderTable.createOrder(customerEmailAddress, dateOrderPlaced, orderStatus, orderItemsUpdate);
 
     res.status(200).send("The order is successfully added.");
   } catch (err) {
