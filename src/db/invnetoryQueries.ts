@@ -1,4 +1,5 @@
 import { makeUpdateItemSyntax } from "./utils";
+import { INVENTORIES } from "../constants";
 
 export const createInvntoryTable = (): string =>
   "CREATE TABLE IF NOT EXISTS inventories (inventory_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price INTEGER, quantity_available INTEGER)";
@@ -23,10 +24,10 @@ export const updateInventoryItem = (
   quantityAvailable: number | null
 ): string => {
   const items = makeUpdateItemSyntax([
-    ["name", name],
-    ["description", description],
-    ["price", price],
-    ["quantity_available", quantityAvailable]
+    [INVENTORIES.NAME, name],
+    [INVENTORIES.DESCRIPTION, description],
+    [INVENTORIES.PRICE, price],
+    [INVENTORIES.QUANTITY_AVAILABLE, quantityAvailable]
   ]);
 
   return `UPDATE inventories SET ${items} WHERE inventory_id = ${id};`;

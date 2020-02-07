@@ -13,6 +13,7 @@ import {
   deleteOrder
 } from "../db/orderQueries";
 import InventoryQuantity from "../entities/inventoryQuantity";
+import { ORDERS, ORDERS_DETAIL, INVENTORIES } from "../constants";
 
 class OrderTable {
   static createOrder(
@@ -27,11 +28,11 @@ class OrderTable {
         db.run(createOrderTable());
         db.run(createOrderDetailTable());
         db.run(insertOrder(customerEmailAddress, dateOrderPlaced, orderStatus));
-        db.get(selectOrderNewest(), (err, row) => {
+        db.get(selectOrderNewest(), (err, order) => {
           if (err) return reject(err);
           orderItems.forEach(orderItem => {
             db.run(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
-            db.run(insertOrderDetail(row["order_id"], orderItem.inventoryId, orderItem.quantity));
+            db.run(insertOrderDetail(order[ORDERS.ORDER_ID], orderItem.inventoryId, orderItem.quantity));
 
             return resolve();
           });
@@ -43,15 +44,17 @@ class OrderTable {
   static getOrders(): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(selectOrders(), (err, rows) => {
-        return err ? reject(err) : resolve(rows);
+      db.all(selectOrders(), (err, orders) => {
+        return err ? reject(err) : resolve(orders);
       })
     );
   }
 
   static getOrder(id: Number): Promise<any> {
     const db = dBSqlite3();
-    return new Promise((resolve, reject) => db.all(selectOrder(id), (err, row) => (err ? reject(err) : resolve(row))));
+    return new Promise((resolve, reject) =>
+      db.all(selectOrder(id), (err, orders) => (err ? reject(err) : resolve(orders)))
+    );
   }
 
   static updateOrder(
@@ -73,19 +76,22 @@ class OrderTable {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
       db.serialize(() => {
-        db.all(selectOrder(id), (err: Error | null, rows: any[]) => {
+        db.all(selectOrder(id), (err: Error | null, orders: any[]) => {
           if (err) return reject(err);
-          rows.forEach(orderDetail => {
-            db.get(selectInventoryItem(orderDetail["inventory_id"]), (err: Error | null, row: any) => {
-              if (err) return reject(err);
-              db.run(
-                updateInventoryItemQuantiy(
-                  orderDetail["inventory_id"],
-                  row["quantity_available"] + orderDetail["quantity"]
-                ),
-                (err: Error | null) => reject(err)
-              );
-            });
+          orders.forEach(orderDetail => {
+            db.get(
+              selectInventoryItem(orderDetail[ORDERS_DETAIL.INVNETORY_ID]),
+              (err: Error | null, inventory: any) => {
+                if (err) return reject(err);
+                db.run(
+                  updateInventoryItemQuantiy(
+                    orderDetail[ORDERS_DETAIL.INVNETORY_ID],
+                    inventory[INVENTORIES.QUANTITY_AVAILABLE] + orderDetail[ORDERS_DETAIL.QUANTITY]
+                  ),
+                  (err: Error | null) => reject(err)
+                );
+              }
+            );
           });
         });
         db.run(deleteOrder(id), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()));

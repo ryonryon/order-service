@@ -1,4 +1,5 @@
 import { makeUpdateItemSyntax } from "./utils";
+import { ORDERS, ORDERS_DETAIL } from "../constants";
 
 export const createOrderTable = () =>
   `CREATE TABLE IF NOT EXISTS orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, customer_email_address TEXT, date_order_placed TEXT, order_status TEXT);`;
@@ -19,15 +20,15 @@ export const updateOrderItem = (
   customerEmailAddress: string | null = null,
   dateOrderPlaced: string | null = null,
   orderStatus: string | null = null,
-  productId: string | null = null,
+  inventoryId: string | null = null,
   quantity: string | null = null
 ): string => {
   const items = makeUpdateItemSyntax([
-    ["customer_email_address", customerEmailAddress],
-    ["date_order_placed", dateOrderPlaced],
-    ["order_status", orderStatus],
-    ["product_id", productId],
-    ["quantity", quantity]
+    [ORDERS.COSUTOME_EMAIL_ADDRESS, customerEmailAddress],
+    [ORDERS.DATE_ORDER_PLACED, dateOrderPlaced],
+    [ORDERS.ORDER_STATUS, orderStatus],
+    [ORDERS_DETAIL.INVNETORY_ID, inventoryId],
+    [ORDERS_DETAIL.QUANTITY, quantity]
   ]);
 
   return `UPDATE orders SET ${items} WHERE order_id = ${id};`;

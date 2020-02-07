@@ -1,21 +1,21 @@
 import InventoryTable from "../../repositories/inventoryRepository";
-import { CONNECTION_ERROR, INVALID_ITEM_TYPE_ERROR } from "../../constants";
+import { CONNECTION_ERROR, INVALID_ITEM_TYPE_ERROR, INVENTORIES } from "../../constants";
 import { checkType, TYPE } from "../../validations";
 
 async function createInventory(req, res) {
-  const name = req.body["name"];
+  const name = req.body[INVENTORIES.NAME];
 
-  const description = req.body["description"];
-  const price = req.body["price"];
-  const quantityAvailable = req.body["quantity_available"];
+  const description = req.body[INVENTORIES.DESCRIPTION];
+  const price = req.body[INVENTORIES.PRICE];
+  const quantityAvailable = req.body[INVENTORIES.QUANTITY_AVAILABLE];
 
   try {
-    checkType(name, "name", TYPE.STRING);
-    checkType(description, "description", TYPE.STRING);
-    checkType(price, "price", TYPE.NUMBER);
-    checkType(quantityAvailable, "quantity_available", TYPE.NUMBER);
+    checkType(name, INVENTORIES.NAME, TYPE.STRING);
+    checkType(description, INVENTORIES.DESCRIPTION, TYPE.STRING);
+    checkType(price, INVENTORIES.PRICE, TYPE.NUMBER);
+    checkType(quantityAvailable, INVENTORIES.QUANTITY_AVAILABLE, TYPE.NUMBER);
 
-    InventoryTable.createInventory(name, description, price, quantityAvailable);
+    await InventoryTable.createInventory(name, description, price, quantityAvailable);
 
     res.status(200).send("The inventory is successfully added.");
   } catch (err) {
