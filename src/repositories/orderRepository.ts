@@ -51,7 +51,7 @@ class OrderTable {
 
   static getOrder(id: Number): Promise<any> {
     const db = dBSqlite3();
-    return new Promise((resolve, reject) => db.get(selectOrder(id), (err, row) => (err ? reject(err) : resolve(row))));
+    return new Promise((resolve, reject) => db.all(selectOrder(id), (err, row) => (err ? reject(err) : resolve(row))));
   }
 
   static updateOrder(
