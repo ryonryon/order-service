@@ -1,7 +1,7 @@
 import { RunResult } from "sqlite3";
 
 import dBSqlite3 from "../db/dbSqlite3";
-import { updateInventoryItemQuantiy } from "../db/invnetoryQueries";
+import { updateInventoryItemQuantiy, selectInventoryItem } from "../db/invnetoryQueries";
 import { insertOrderDetail, createOrderDetailTable } from "../db/orderDetailQueries";
 import {
   createOrderTable,
@@ -55,7 +55,7 @@ class OrderTable {
   }
 
   static updateOrder(
-    id: Number,
+    id: number,
     customerEmailAddres: string | null = null,
     dateOrderPlaced: string | null = null,
     orderStatus: string | null = null
@@ -69,10 +69,28 @@ class OrderTable {
     });
   }
 
-  static deleteOrder(id: Number): Promise<void> {
+  static deleteOrder(id: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(deleteOrder(id), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
+      db.serialize(() => {
+        db.all(selectOrder(id), (err: Error | null, rows: any[]) => {
+          if (err) return reject(err);
+          rows.forEach(orderDetail => {
+            db.get(selectInventoryItem(orderDetail["inventory_id"]), (err: Error | null, row: any) => {
+              if (err) return reject(err);
+              db.run(
+                updateInventoryItemQuantiy(
+                  orderDetail["inventory_id"],
+                  row["quantity_available"] + orderDetail["quantity"]
+                ),
+                (err: Error | null) => reject(err)
+              );
+            });
+          });
+        });
+        db.run(deleteOrder(id), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()));
+        return resolve();
+      })
     );
   }
 }
