@@ -6,18 +6,24 @@ import {
   insertInventoryItem,
   deleteInventoryItem,
   updateInventoryItem,
-  updateInventoryItemQuantiy,
   selectInventoryItem,
   createInvntoryTable
 } from "../db/invnetoryQueries";
 import { RunResult } from "sqlite3";
 
 class InventoryTable {
-  static createInventory(name: String, description: String, price: String, quantityAvailable: String) {
+  static createInventory(name: String, description: String, price: String, quantityAvailable: String): Promise<void> {
     const db = dBSqlite3();
-    db.serialize(() => {
-      db.run(createInvntoryTable());
-      db.run(insertInventoryItem(name, description, price, quantityAvailable));
+    return new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.run(createInvntoryTable(), (err: Error | null) => {
+          if (err) return reject(err);
+        });
+        db.run(insertInventoryItem(name, description, price, quantityAvailable), (err: Error | null) => {
+          if (err) return reject(err);
+          return resolve();
+        });
+      });
     });
   }
 

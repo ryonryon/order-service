@@ -1,22 +1,22 @@
 import InventoryTable from "../../repositories/inventoryRepository";
-import { INVALID_ITEM_TYPE_ERROR, INVALID_INVENTORY_ID_ERROR, CONNECTION_ERROR } from "../../constants";
+import { INVALID_ITEM_TYPE_ERROR, INVALID_INVENTORY_ID_ERROR, CONNECTION_ERROR, INVENTORIES } from "../../constants";
 import { checkType, TYPE } from "../../validations";
 
 async function updateInventoryById(req, res) {
   const id = req.params.id;
-  const name = req.body["name"];
-  const description = req.body["description"];
-  const price = req.body["price"];
-  const quantityAvailable = req.body["quantity_available"];
+  const name = req.body[INVENTORIES.NAME];
+  const description = req.body[INVENTORIES.DESCRIPTION];
+  const price = req.body[INVENTORIES.PRICE];
+  const quantityAvailable = req.body[INVENTORIES.QUANTITY_AVAILABLE];
   try {
     if ((await InventoryTable.getInventory(id)) === null) {
       throw INVALID_INVENTORY_ID_ERROR.type;
     }
 
-    checkType(name, "name", TYPE.STRING);
-    checkType(description, "description", TYPE.STRING);
-    checkType(price, "price", TYPE.NUMBER);
-    checkType(quantityAvailable, "quantity_available", TYPE.NUMBER);
+    checkType(name, INVENTORIES.NAME, TYPE.STRING);
+    checkType(description, INVENTORIES.DESCRIPTION, TYPE.STRING);
+    checkType(price, INVENTORIES.PRICE, TYPE.NUMBER);
+    checkType(quantityAvailable, INVENTORIES.QUANTITY_AVAILABLE, TYPE.NUMBER);
 
     await InventoryTable.updateInventory(id, name, description, price, quantityAvailable);
 

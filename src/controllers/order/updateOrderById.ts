@@ -4,32 +4,33 @@ import {
   INVALID_ITEM_TYPE_ERROR,
   INVALID_EMAIL_ERROR,
   INVALID_DATE_ERROR,
-  CONNECTION_ERROR
+  CONNECTION_ERROR,
+  ORDERS
 } from "../../constants";
 import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
 
 async function updateOrderById(req, res) {
   const id = req.params.id;
-  const customerEmailAddress = req.body["customer_email_address"];
-  const dateOrderPlaced = req.body["data_order_placed"];
-  const orderStatus = req.body["order_status"];
+  const customerEmailAddress = req.body[ORDERS.COSUTOME_EMAIL_ADDRESS];
+  const dateOrderPlaced = req.body[ORDERS.DATE_ORDER_PLACED];
+  const orderStatus = req.body[ORDERS.ORDER_STATUS];
 
   try {
     const order = await OrderTable.getOrder(id);
     if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
 
     if (customerEmailAddress !== undefined) {
-      checkType(customerEmailAddress, "customer_email_address", TYPE.STRING);
+      checkType(customerEmailAddress, ORDERS.COSUTOME_EMAIL_ADDRESS, TYPE.STRING);
       checkEmail(customerEmailAddress);
     }
 
     if (dateOrderPlaced !== undefined) {
-      checkType(dateOrderPlaced, "data_order_placed", TYPE.STRING);
+      checkType(dateOrderPlaced, ORDERS.DATE_ORDER_PLACED, TYPE.STRING);
       checkDate(dateOrderPlaced);
     }
 
     if (orderStatus !== undefined) {
-      checkType(orderStatus, "order_status", TYPE.STRING);
+      checkType(orderStatus, ORDERS.ORDER_STATUS, TYPE.STRING);
     }
 
     await OrderTable.updateOrder(id, customerEmailAddress, dateOrderPlaced, orderStatus);

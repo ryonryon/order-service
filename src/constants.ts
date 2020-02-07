@@ -31,3 +31,25 @@ export const AVAILABLE_QUANTITY_ERROR = {
   type: "AVAILABLE_QUANTITY_ERROR",
   message: (id: Number): String => `Available Quantity Error: Inventory id ${id} doesn't have enough quantity.`
 };
+
+export enum INVENTORIES {
+  INVNETORY_ID = "inventory_id",
+  NAME = "name",
+  DESCRIPTION = "description",
+  PRICE = "price",
+  QUANTITY_AVAILABLE = "quantity_available"
+}
+
+export enum ORDERS {
+  ORDER_ID = "order_id",
+  COSUTOME_EMAIL_ADDRESS = "custom_email_address",
+  DATE_ORDER_PLACED = "date_order_placed",
+  ORDER_STATUS = "order_status"
+}
+
+export enum ORDERS_DETAIL {
+  ORDER_DETAIL_ID = "order_detail_id",
+  ORDER_ID = "order_id",
+  INVNETORY_ID = "inventory_id",
+  QUANTITY = "quantity"
+}
