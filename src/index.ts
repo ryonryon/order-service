@@ -1,4 +1,4 @@
-import express from "express";
+import express = require("express");
 
 import InventoryRoute from "./routes/inventoryRoute";
 import OrderRoute from "./routes/orderRoute";

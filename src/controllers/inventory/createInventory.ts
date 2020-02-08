@@ -1,10 +1,12 @@
+import { Request, Response } from "express";
+
 import InventoryTable from "../../repositories/inventoryRepository";
+
 import { CONNECTION_ERROR, INVALID_ITEM_TYPE_ERROR, INVENTORIES } from "../../constants";
 import { checkType, TYPE } from "../../validations";
 
-async function createInventory(req, res) {
+async function createInventory(req: Request, res: Response) {
   const name = req.body[INVENTORIES.NAME];
-
   const description = req.body[INVENTORIES.DESCRIPTION];
   const price = req.body[INVENTORIES.PRICE];
   const quantityAvailable = req.body[INVENTORIES.QUANTITY_AVAILABLE];

@@ -1,9 +1,10 @@
+import { Request, Response } from "express";
 import InventoryTable from "../../repositories/inventoryRepository";
 import { INVALID_ITEM_TYPE_ERROR, INVALID_INVENTORY_ID_ERROR, CONNECTION_ERROR, INVENTORIES } from "../../constants";
 import { checkType, TYPE } from "../../validations";
 
-async function updateInventoryById(req, res) {
-  const id = req.params.id;
+async function updateInventoryById(req: Request, res: Response) {
+  const id = Number(req.params.id);
   const name = req.body[INVENTORIES.NAME];
   const description = req.body[INVENTORIES.DESCRIPTION];
   const price = req.body[INVENTORIES.PRICE];

@@ -28,15 +28,16 @@ class OrderTable {
         db.run(createOrderTable());
         db.run(createOrderDetailTable());
         db.run(insertOrder(customerEmailAddress, dateOrderPlaced, orderStatus));
-        db.get(selectOrderNewest(), (err, order) => {
-          if (err) return reject(err);
-          orderItems.forEach(orderItem => {
-            db.run(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
-            db.run(insertOrderDetail(order[ORDERS.ORDER_ID], orderItem.inventoryId, orderItem.quantity));
 
-            return resolve();
-          });
+        const order = await new Promise<any>((resolve, _) =>
+          db.get(selectOrderNewest(), (err, row) => (err ? reject(err) : resolve(row)))
+        );
+
+        orderItems.forEach(orderItem => {
+          db.run(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
+          db.run(insertOrderDetail(order[ORDERS.ORDER_ID], orderItem.inventoryId, orderItem.quantity));
         });
+        return resolve();
       });
     });
   }
@@ -44,9 +45,7 @@ class OrderTable {
   static getOrders(): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(selectOrders(), (err, orders) => {
-        return err ? reject(err) : resolve(orders);
-      })
+      db.all(selectOrders(), (err, orders) => (err ? reject(err) : resolve(orders)))
     );
   }
 
@@ -75,26 +74,33 @@ class OrderTable {
   static deleteOrder(id: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.serialize(() => {
-        db.all(selectOrder(id), (err: Error | null, orders: any[]) => {
-          if (err) return reject(err);
-          orders.forEach(orderDetail => {
-            db.get(
-              selectInventoryItem(orderDetail[ORDERS_DETAIL.INVNETORY_ID]),
-              (err: Error | null, inventory: any) => {
-                if (err) return reject(err);
-                db.run(
-                  updateInventoryItemQuantiy(
-                    orderDetail[ORDERS_DETAIL.INVNETORY_ID],
-                    inventory[INVENTORIES.QUANTITY_AVAILABLE] + orderDetail[ORDERS_DETAIL.QUANTITY]
-                  ),
-                  (err: Error | null) => reject(err)
-                );
-              }
+      db.serialize(async () => {
+        const order = await new Promise<any[]>((resolve, _) =>
+          db.all(selectOrder(id), (err: Error | null, _order: any[]) => (err ? reject(err) : resolve(_order)))
+        );
+
+        order.forEach(async orderDetail => {
+          const inventory = await new Promise<any>((resolve, _) => {
+            db.get(selectInventoryItem(orderDetail[ORDERS_DETAIL.INVNETORY_ID]), (err: Error | null, _inventory: any) =>
+              err ? reject(err) : resolve(_inventory)
+            );
+          });
+
+          await new Promise((resolve, _) => {
+            db.run(
+              updateInventoryItemQuantiy(
+                orderDetail[ORDERS_DETAIL.INVNETORY_ID],
+                inventory[INVENTORIES.QUANTITY_AVAILABLE] + orderDetail[ORDERS_DETAIL.QUANTITY]
+              ),
+              (err: Error | null, _: RunResult) => (err ? reject(err) : resolve())
             );
           });
         });
-        db.run(deleteOrder(id), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()));
+
+        await new Promise((resolve, _) => {
+          db.run(deleteOrder(id), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()));
+        });
+
         return resolve();
       })
     );

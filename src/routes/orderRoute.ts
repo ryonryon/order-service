@@ -1,4 +1,4 @@
-import express from "express";
+import * as express from "express";
 
 import createOrder from "../controllers/order/createOrder";
 import getOrders from "../controllers/order/getOrders";
