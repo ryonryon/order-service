@@ -45,9 +45,7 @@ class OrderTable {
   static getOrders(): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(selectOrders(), (err, orders) => {
-        return err ? reject(err) : resolve(orders);
-      })
+      db.all(selectOrders(), (err, orders) => (err ? reject(err) : resolve(orders)))
     );
   }
 
