@@ -28,15 +28,16 @@ class OrderTable {
         db.run(createOrderTable());
         db.run(createOrderDetailTable());
         db.run(insertOrder(customerEmailAddress, dateOrderPlaced, orderStatus));
-        db.get(selectOrderNewest(), (err, order) => {
-          if (err) return reject(err);
-          orderItems.forEach(orderItem => {
-            db.run(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
-            db.run(insertOrderDetail(order[ORDERS.ORDER_ID], orderItem.inventoryId, orderItem.quantity));
 
-            return resolve();
-          });
+        const order = await new Promise<any>((resolve, _) =>
+          db.get(selectOrderNewest(), (err, row) => (err ? reject(err) : resolve(row)))
+        );
+
+        orderItems.forEach(orderItem => {
+          db.run(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
+          db.run(insertOrderDetail(order[ORDERS.ORDER_ID], orderItem.inventoryId, orderItem.quantity));
         });
+        return resolve();
       });
     });
   }
