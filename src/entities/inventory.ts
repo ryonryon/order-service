@@ -1,8 +1,9 @@
 interface Inventory {
-  inventory_id: Number;
-  name: String;
-  description: String;
-  quantity_available: String;
+  inventoryId: number;
+  name: string;
+  description: string;
+  price: number;
+  quantityAvailable: number;
 }
 
 export default Inventory;

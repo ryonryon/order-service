@@ -75,26 +75,33 @@ class OrderTable {
   static deleteOrder(id: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.serialize(() => {
-        db.all(selectOrder(id), (err: Error | null, orders: any[]) => {
-          if (err) return reject(err);
-          orders.forEach(orderDetail => {
-            db.get(
-              selectInventoryItem(orderDetail[ORDERS_DETAIL.INVNETORY_ID]),
-              (err: Error | null, inventory: any) => {
-                if (err) return reject(err);
-                db.run(
-                  updateInventoryItemQuantiy(
-                    orderDetail[ORDERS_DETAIL.INVNETORY_ID],
-                    inventory[INVENTORIES.QUANTITY_AVAILABLE] + orderDetail[ORDERS_DETAIL.QUANTITY]
-                  ),
-                  (err: Error | null) => reject(err)
-                );
-              }
+      db.serialize(async () => {
+        const order = await new Promise<any[]>((resolve, _) =>
+          db.all(selectOrder(id), (err: Error | null, _order: any[]) => (err ? reject(err) : resolve(_order)))
+        );
+
+        order.forEach(async orderDetail => {
+          const inventory = await new Promise<any>((resolve, _) => {
+            db.get(selectInventoryItem(orderDetail[ORDERS_DETAIL.INVNETORY_ID]), (err: Error | null, _inventory: any) =>
+              err ? reject(err) : resolve(_inventory)
+            );
+          });
+
+          await new Promise((resolve, _) => {
+            db.run(
+              updateInventoryItemQuantiy(
+                orderDetail[ORDERS_DETAIL.INVNETORY_ID],
+                inventory[INVENTORIES.QUANTITY_AVAILABLE] + orderDetail[ORDERS_DETAIL.QUANTITY]
+              ),
+              (err: Error | null, _: RunResult) => (err ? reject(err) : resolve())
             );
           });
         });
-        db.run(deleteOrder(id), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()));
+
+        await new Promise((resolve, _) => {
+          db.run(deleteOrder(id), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()));
+        });
+
         return resolve();
       })
     );
