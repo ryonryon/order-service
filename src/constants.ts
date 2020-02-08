@@ -42,7 +42,7 @@ export enum INVENTORIES {
 
 export enum ORDERS {
   ORDER_ID = "order_id",
-  COSUTOME_EMAIL_ADDRESS = "custom_email_address",
+  COSUTOMER_EMAIL_ADDRESS = "customer_email_address",
   DATE_ORDER_PLACED = "date_order_placed",
   ORDER_STATUS = "order_status"
 }
