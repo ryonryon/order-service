@@ -24,7 +24,7 @@ export const updateOrderItem = (
   quantity: string | null = null
 ): string => {
   const items = makeUpdateItemSyntax([
-    [ORDERS.COSUTOME_EMAIL_ADDRESS, customerEmailAddress],
+    [ORDERS.COSUTOMER_EMAIL_ADDRESS, customerEmailAddress],
     [ORDERS.DATE_ORDER_PLACED, dateOrderPlaced],
     [ORDERS.ORDER_STATUS, orderStatus],
     [ORDERS_DETAIL.INVNETORY_ID, inventoryId],
