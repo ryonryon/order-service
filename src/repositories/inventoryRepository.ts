@@ -41,10 +41,10 @@ class InventoryTable {
 
   static updateInventory(
     id: number,
-    name: string | null = null,
-    description: string | null = null,
-    price: number | null = null,
-    quantityAvailable: number | null = null
+    name: string | null,
+    description: string | null,
+    price: number | null,
+    quantityAvailable: number | null
   ): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
@@ -54,7 +54,7 @@ class InventoryTable {
     );
   }
 
-  static deleteInventry(id: Number): Promise<void> {
+  static deleteInventry(id: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
       db.run(deleteInventoryItem(id), (_: RunResult, err: Error | null) => (err ? reject(err) : resolve()))
