@@ -6,10 +6,39 @@
     "sourceMap": true,
     "outDir": "./dist",
     "strict": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   }
 }
+
+// TODO
+// "esModuleInterop": true,
+// import a from "./a";
+// import * as b from "./b";
+// import { c as cd } from "./c";
+// import d, { da } from "./d";
+// const e = require("./e");
+// import f = require("./f");
+
+// const g = await import("./g");
+
+// export default h;
+// export const i;
+// module.exports = j;
+
+// module.exports = () => {};
+
+// 😴
+
+// import * as React from "😴";
+
+// export default a;
+// export const b;
+
+// const { default: a, b } = require("😴");
+
+// import * as a from "😴";
+
+// a();

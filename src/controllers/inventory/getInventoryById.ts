@@ -1,8 +1,10 @@
+import { Request, Response } from "express";
+
 import InventoryTable from "../../repositories/inventoryRepository";
 import { INVALID_INVENTORY_ID_ERROR, CONNECTION_ERROR } from "../../constants";
 
-async function getInventoryById(req, res) {
-  const id = req.params.id;
+async function getInventoryById(req: Request, res: Response) {
+  const id = Number(req.params.id);
   try {
     const inventry = await InventoryTable.getInventory(id);
     if (inventry === null) throw INVALID_INVENTORY_ID_ERROR.type;

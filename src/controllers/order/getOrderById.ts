@@ -1,9 +1,10 @@
+import { Request, Response } from "express";
+
 import OrderTable from "../../repositories/orderRepository";
 import { INVALID_ORDER_ID_ERROR, CONNECTION_ERROR } from "../../constants";
 
-async function getOrderById(req, res) {
-  const id = req.params.id;
-
+async function getOrderById(req: Request, res: Response) {
+  const id = Number(req.params.id);
   try {
     const order = await OrderTable.getOrder(id);
     if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;

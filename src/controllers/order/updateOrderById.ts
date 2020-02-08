@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 import OrderTable from "../../repositories/orderRepository";
 import {
   INVALID_ORDER_ID_ERROR,
@@ -9,9 +11,9 @@ import {
 } from "../../constants";
 import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
 
-async function updateOrderById(req, res) {
-  const id = req.params.id;
-  const customerEmailAddress = req.body[ORDERS.COSUTOME_EMAIL_ADDRESS];
+async function updateOrderById(req: Request, res: Response) {
+  const id = Number(req.params.id);
+  const customerEmailAddress = req.body[ORDERS.COSUTOMER_EMAIL_ADDRESS];
   const dateOrderPlaced = req.body[ORDERS.DATE_ORDER_PLACED];
   const orderStatus = req.body[ORDERS.ORDER_STATUS];
 
@@ -20,7 +22,7 @@ async function updateOrderById(req, res) {
     if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
 
     if (customerEmailAddress !== undefined) {
-      checkType(customerEmailAddress, ORDERS.COSUTOME_EMAIL_ADDRESS, TYPE.STRING);
+      checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
       checkEmail(customerEmailAddress);
     }
 

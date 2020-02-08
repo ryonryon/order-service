@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import {
   CONNECTION_ERROR,
   INVALID_ITEM_TYPE_ERROR,
@@ -14,14 +15,14 @@ import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
 import InventoryTable from "../../repositories/inventoryRepository";
 import InventoryQuantity from "../../entities/inventoryQuantity";
 
-async function createOrder(req, res) {
-  const customerEmailAddress = req.body[ORDERS.COSUTOME_EMAIL_ADDRESS];
+async function createOrder(req: Request, res: Response) {
+  const customerEmailAddress = req.body[ORDERS.COSUTOMER_EMAIL_ADDRESS];
   const dateOrderPlaced = req.body[ORDERS.DATE_ORDER_PLACED];
   const orderStatus = req.body[ORDERS.ORDER_STATUS];
   const orderItems = req.body["items"];
 
   try {
-    checkType(customerEmailAddress, ORDERS.COSUTOME_EMAIL_ADDRESS, TYPE.STRING);
+    checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
     checkEmail(customerEmailAddress);
     checkType(dateOrderPlaced, ORDERS.DATE_ORDER_PLACED, TYPE.STRING);
     checkDate(dateOrderPlaced);
@@ -29,7 +30,7 @@ async function createOrder(req, res) {
 
     const orderItemsUpdate: InventoryQuantity[] = [];
 
-    await orderItems.forEach(async orderItem => {
+    await orderItems.forEach(async (orderItem: any) => {
       const [inventoryId, quantity] = [orderItem[ORDERS_DETAIL.INVNETORY_ID], orderItem[ORDERS_DETAIL.QUANTITY]];
       const invenotryItem = await InventoryTable.getInventory(inventoryId);
       if (invenotryItem === null) {
@@ -38,7 +39,7 @@ async function createOrder(req, res) {
           message: INVALID_DATE_ERROR.message(inventoryId)
         };
       }
-      const quantityAvailable = Number(invenotryItem[INVENTORIES.QUANTITY_AVAILABLE]);
+      const quantityAvailable = invenotryItem[INVENTORIES.QUANTITY_AVAILABLE];
       if (quantityAvailable < quantity) {
         throw {
           error_type: AVAILABLE_QUANTITY_ERROR.type,
