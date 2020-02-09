@@ -3,6 +3,10 @@ interface Order {
   customtomEmailAddress: string;
   dateOrderPlaced: string;
   orderStatus: string;
+  details: OrderDetail[];
+}
+
+interface OrderDetail {
   orderDetailId: number;
   inventoryId: number;
   quantity: number;
