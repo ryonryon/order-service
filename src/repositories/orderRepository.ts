@@ -18,17 +18,17 @@ import {
   deleteOrder
 } from "../db/orderQueries";
 import InventoryQuantity from "../entities/inventoryQuantity";
-import { ORDERS, ORDERS_DETAIL, INVENTORIES } from "../constants";
+import { ORDERS, ORDERS_DETAIL, INVENTORIES, INVALID_INVENTORY_ID_ERROR, AVAILABLE_QUANTITY_ERROR } from "../constants";
 
 class OrderTable {
-  static createOrder(
+  static async createOrder(
     customerEmailAddress: string,
     dateOrderPlaced: string,
     orderStatus: string,
-    orderItems: InventoryQuantity[]
+    orderItems: any[]
   ): Promise<void> {
     const db = dBSqlite3();
-    return new Promise((resolve, reject) => {
+    new Promise((resolve, reject) => {
       db.serialize(async () => {
         db.run(createOrderTable());
         db.run(createOrderDetailTable());
@@ -38,10 +38,32 @@ class OrderTable {
           db.get(selectOrderNewest(), (err, row) => (err ? reject(err) : resolve(row)))
         );
 
-        orderItems.forEach(orderItem => {
-          db.run(updateInventoryItemQuantiy(orderItem.inventoryId, orderItem.newQuantityAvailable));
-          db.run(insertOrderDetail(order[ORDERS.ORDER_ID], orderItem.inventoryId, orderItem.quantity));
+        await new Promise((resolve, reject) => {
+          orderItems.forEach(async orderItem => {
+            const [inventoryId, quantity] = [orderItem[ORDERS_DETAIL.INVNETORY_ID], orderItem[ORDERS_DETAIL.QUANTITY]];
+            const inventory: any = await new Promise((resolve, _) =>
+              db.get(selectInventoryItem(inventoryId), (err: Error | null, _inventory: any) =>
+                err ? reject(err) : resolve(_inventory)
+              )
+            );
+            if (inventory === undefined) reject(INVALID_INVENTORY_ID_ERROR.type);
+            if (inventory[INVENTORIES.QUANTITY_AVAILABLE] < quantity) reject(AVAILABLE_QUANTITY_ERROR.type);
+
+            db.run(
+              updateInventoryItemQuantiy(
+                orderItem[INVENTORIES.INVNETORY_ID],
+                inventory[INVENTORIES.QUANTITY_AVAILABLE] - quantity
+              ),
+              (err: Error | null) => {
+                if (err) reject(err);
+              }
+            );
+            db.run(insertOrderDetail(order[ORDERS.ORDER_ID], inventoryId, quantity), (err: Error | null) =>
+              err ? reject(err) : resolve()
+            );
+          });
         });
+
         return resolve();
       });
     });
