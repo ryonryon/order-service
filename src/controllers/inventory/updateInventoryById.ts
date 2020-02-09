@@ -13,8 +13,6 @@ async function updateInventoryById(req: Request, res: Response) {
     req.body[INVENTORIES.QUANTITY_AVAILABLE] !== undefined ? req.body[INVENTORIES.QUANTITY_AVAILABLE] : null;
 
   try {
-    if ((await InventoryTable.getInventory(id)) === null) throw INVALID_INVENTORY_ID_ERROR.type;
-
     if (name !== null) checkType(name, INVENTORIES.NAME, TYPE.STRING);
     if (description !== null) checkType(description, INVENTORIES.DESCRIPTION, TYPE.STRING);
     if (price !== null) checkType(price, INVENTORIES.PRICE, TYPE.NUMBER);

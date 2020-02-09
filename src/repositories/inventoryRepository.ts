@@ -41,7 +41,7 @@ class InventoryTable {
     );
   }
 
-  static updateInventory(
+  static async updateInventory(
     id: number,
     name: string | null,
     description: string | null,
@@ -49,7 +49,9 @@ class InventoryTable {
     quantityAvailable: number | null
   ): Promise<void> {
     const db = dBSqlite3();
-    return new Promise((resolve, reject) =>
+    if (!this.isInventoryExist(id)) throw INVALID_INVENTORY_ID_ERROR.type;
+
+    new Promise((resolve, reject) =>
       db.run(updateInventoryItem(id, name, description, price, quantityAvailable), (_: RunResult, err: Error | null) =>
         err ? reject(err) : resolve()
       )
@@ -58,14 +60,19 @@ class InventoryTable {
 
   static async deleteInventry(id: number): Promise<void> {
     const db = dBSqlite3();
-    const inventory = await new Promise<any>((resolve, reject) =>
-      db.get(selectInventoryItem(id), (err: Error | null, _inventory: any) => (err ? reject(err) : resolve(_inventory)))
-    );
-    if (inventory === undefined) throw INVALID_INVENTORY_ID_ERROR.type;
+    if (!this.isInventoryExist(id)) throw INVALID_INVENTORY_ID_ERROR.type;
 
     new Promise((resolve, reject) =>
       db.run(deleteInventoryItem(id), (_: RunResult, err: Error | null) => (err ? reject(err) : resolve()))
     );
+  }
+
+  private static async isInventoryExist(id: number): Promise<boolean> {
+    const db = dBSqlite3();
+    const inventory = await new Promise<any>((resolve, reject) =>
+      db.get(selectInventoryItem(id), (err: Error | null, _inventory: any) => (err ? reject(err) : resolve(_inventory)))
+    );
+    return inventory !== undefined;
   }
 }
 
