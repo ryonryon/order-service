@@ -3,3 +3,9 @@ export const createOrderDetailTable = (): string =>
 
 export const insertOrderDetail = (orderId: number, inventoryId: number, quantity: number): string =>
   `INSERT INTO orders_detail (order_id, inventory_id, quantity) VALUES (${orderId}, ${inventoryId}, ${quantity});`;
+
+export const selectOrderDetail = (orderId: number, inventoryId: number) =>
+  `SELECT order_id, inventory_id, quantity FROM orders_detail WHERE order_id = ${orderId} AND inventory_id = ${inventoryId};`;
+
+export const updateOrderDetail = (orderId: number, inventoryId: number, quantity: number): string =>
+  `UPDATE orders_detail SET quantity = ${quantity} WHERE order_id = ${orderId} AND inventory_id = ${inventoryId};`;

@@ -2,7 +2,12 @@ import { RunResult } from "sqlite3";
 
 import dBSqlite3 from "../db/dbSqlite3";
 import { updateInventoryItemQuantiy, selectInventoryItem } from "../db/invnetoryQueries";
-import { insertOrderDetail, createOrderDetailTable } from "../db/orderDetailQueries";
+import {
+  insertOrderDetail,
+  createOrderDetailTable,
+  selectOrderDetail,
+  updateOrderDetail
+} from "../db/orderDetailQueries";
 import {
   createOrderTable,
   selectOrders,
@@ -49,25 +54,82 @@ class OrderTable {
     );
   }
 
-  static getOrder(id: Number): Promise<any> {
+  static getOrder(id: number): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
       db.all(selectOrder(id), (err, orders) => (err ? reject(err) : resolve(orders)))
     );
   }
 
+  static getOrderDetail(orderId: number, inventoryId: number): Promise<any> {
+    const db = dBSqlite3();
+    return new Promise((resolve, reject) => {
+      db.get(selectOrderDetail(orderId, inventoryId), (err: Error | null, orderDetail: any) =>
+        err ? reject(err) : resolve(orderDetail)
+      );
+    });
+  }
+
   static updateOrder(
-    id: number,
-    customerEmailAddres: string | null = null,
-    dateOrderPlaced: string | null = null,
-    orderStatus: string | null = null
+    orderId: number,
+    customerEmailAddres: string | null,
+    dateOrderPlaced: string | null,
+    orderStatus: string | null,
+    inputOrderDetails: any[] | null
   ): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) => {
-      db.run(
-        updateOrderItem(id, customerEmailAddres, dateOrderPlaced, orderStatus),
-        (err: Error | null, _: RunResult) => (err ? reject(err) : resolve())
-      );
+      db.serialize(() => {
+        db.run(
+          updateOrderItem(orderId, customerEmailAddres, dateOrderPlaced, orderStatus),
+          (err: Error | null, _: RunResult) => {
+            if (err) return reject(err);
+          }
+        );
+
+        if (!inputOrderDetails) return resolve();
+
+        inputOrderDetails.forEach(async inputOrderDetail => {
+          const orderDetail = await new Promise<any>((resolve, _) => {
+            db.get(
+              selectOrderDetail(orderId, inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]),
+              (err: Error | null, _orderDetail: any) => (err ? reject(err) : resolve(_orderDetail))
+            );
+          });
+
+          const inventory = await new Promise<any>((resolve, _) => {
+            db.get(
+              selectInventoryItem(inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]),
+              (err: Error | null, _inventory: any) => (err ? reject(err) : resolve(_inventory))
+            );
+          });
+
+          await new Promise<void>((resolve, _) => {
+            db.run(
+              updateInventoryItemQuantiy(
+                inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
+                inventory[INVENTORIES.QUANTITY_AVAILABLE] +
+                  inputOrderDetail[ORDERS_DETAIL.QUANTITY] -
+                  orderDetail[ORDERS_DETAIL.QUANTITY]
+              ),
+              (_: RunResult, err: Error | null) => (err ? reject(err) : resolve())
+            );
+          });
+
+          await new Promise<void>((resolve, _) => {
+            db.run(
+              updateOrderDetail(
+                inputOrderDetail[ORDERS_DETAIL.ORDER_ID],
+                inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
+                inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+              ),
+              (_: RunResult, err: Error | null) => (err ? reject(err) : resolve())
+            );
+          });
+        });
+
+        return resolve();
+      });
     });
   }
 
