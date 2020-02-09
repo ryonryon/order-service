@@ -9,3 +9,5 @@ export const selectOrderDetail = (orderId: number, inventoryId: number) =>
 
 export const updateOrderDetail = (orderId: number, inventoryId: number, quantity: number): string =>
   `UPDATE orders_detail SET quantity = ${quantity} WHERE order_id = ${orderId} AND inventory_id = ${inventoryId};`;
+
+export const deleteOrderDetails = (orderId: number): string => `DELETE FROM orders_detail WHERE order_id = ${orderId};`;

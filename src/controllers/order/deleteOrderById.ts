@@ -7,9 +7,6 @@ async function deleteOrderById(req: Request, res: Response) {
   const id = Number(req.params.id);
 
   try {
-    const order = await OrderTable.getOrder(id);
-    if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
-
     await OrderTable.deleteOrder(id);
 
     res.status(200).send("The order is successfully deleted.");
