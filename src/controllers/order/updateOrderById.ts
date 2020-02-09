@@ -7,47 +7,73 @@ import {
   INVALID_EMAIL_ERROR,
   INVALID_DATE_ERROR,
   CONNECTION_ERROR,
-  ORDERS
+  ORDERS,
+  ORDERS_DETAIL,
+  INVENTORIES,
+  INVALID_INVENTORY_ID_ERROR,
+  AVAILABLE_QUANTITY_ERROR
 } from "../../constants";
 import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
+import InventoryTable from "../../repositories/inventoryRepository";
 
 async function updateOrderById(req: Request, res: Response) {
-  const id = Number(req.params.id);
-  const customerEmailAddress = req.body[ORDERS.COSUTOMER_EMAIL_ADDRESS];
-  const dateOrderPlaced = req.body[ORDERS.DATE_ORDER_PLACED];
-  const orderStatus = req.body[ORDERS.ORDER_STATUS];
+  const orderId = Number(req.params.id);
+  const customerEmailAddress: string | null =
+    req.body[ORDERS.COSUTOMER_EMAIL_ADDRESS] !== undefined ? req.body[ORDERS.COSUTOMER_EMAIL_ADDRESS] : null;
+  const dateOrderPlaced: string | null =
+    req.body[ORDERS.DATE_ORDER_PLACED] !== undefined ? req.body[ORDERS.DATE_ORDER_PLACED] : null;
+  const orderStatus: string | null = req.body[ORDERS.ORDER_STATUS] !== undefined ? req.body[ORDERS.ORDER_STATUS] : null;
+  const inputOrderDetails: any[] = req.body["details"] !== undefined ? req.body["details"] : null;
 
   try {
-    const order = await OrderTable.getOrder(id);
+    const order = await OrderTable.getOrder(orderId);
     if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
 
-    if (customerEmailAddress !== undefined) {
+    if (customerEmailAddress !== null) {
       checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
       checkEmail(customerEmailAddress);
     }
 
-    if (dateOrderPlaced !== undefined) {
+    if (dateOrderPlaced !== null) {
       checkType(dateOrderPlaced, ORDERS.DATE_ORDER_PLACED, TYPE.STRING);
       checkDate(dateOrderPlaced);
     }
 
-    if (orderStatus !== undefined) {
-      checkType(orderStatus, ORDERS.ORDER_STATUS, TYPE.STRING);
+    if (orderStatus !== null) checkType(orderStatus, ORDERS.ORDER_STATUS, TYPE.STRING);
+
+    if (inputOrderDetails !== null) {
+      inputOrderDetails.forEach(async inputOrderDetail => {
+        const orderDetailId: number | null =
+          inputOrderDetail[ORDERS_DETAIL.ORDER_DETAIL_ID] !== undefined
+            ? inputOrderDetail[ORDERS_DETAIL.ORDER_DETAIL_ID]
+            : null;
+        const inventoryId: number | null =
+          inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID] !== undefined
+            ? inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]
+            : null;
+        const quantity: number | null =
+          inputOrderDetail[ORDERS_DETAIL.QUANTITY] !== undefined ? inputOrderDetail[ORDERS_DETAIL.QUANTITY] : null;
+
+        if (!orderDetailId) checkType(order, ORDERS_DETAIL.ORDER_DETAIL_ID, TYPE.NUMBER);
+        if (!inventoryId) throw INVALID_INVENTORY_ID_ERROR.type;
+        if (!quantity) throw AVAILABLE_QUANTITY_ERROR.type;
+        checkType(inventoryId, ORDERS_DETAIL.INVNETORY_ID, TYPE.NUMBER);
+        checkType(quantity, ORDERS_DETAIL.QUANTITY, TYPE.NUMBER);
+      });
     }
 
-    await OrderTable.updateOrder(id, customerEmailAddress, dateOrderPlaced, orderStatus);
+    await OrderTable.updateOrder(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, inputOrderDetails);
 
     res.status(200).send("The order is successfully updated");
   } catch (err) {
     if (err.error_type === INVALID_ORDER_ID_ERROR.type) {
-      res.status(400).send(INVALID_ORDER_ID_ERROR.message(id));
-    }
-    if (err.error_type === INVALID_ITEM_TYPE_ERROR.type) {
-      res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
+      res.status(400).send(INVALID_ORDER_ID_ERROR.message(orderId));
+    } else if (err.error_type === INVALID_ITEM_TYPE_ERROR.type) {
+      res.status(400).send(err.message);
     } else if (err.error_type === INVALID_EMAIL_ERROR.type) {
-      res.status(400).send(INVALID_EMAIL_ERROR.message(err.email));
+      res.status(400).send(err.message);
     } else if (err.error_type === INVALID_DATE_ERROR.type) {
-      res.status(400).send(INVALID_DATE_ERROR.message(dateOrderPlaced));
+      res.status(400).send(err.message);
     } else res.status(500).send(CONNECTION_ERROR.message());
   }
 }

@@ -5,19 +5,18 @@ import { checkType, TYPE } from "../../validations";
 
 async function updateInventoryById(req: Request, res: Response) {
   const id = Number(req.params.id);
-  const name = req.body[INVENTORIES.NAME];
-  const description = req.body[INVENTORIES.DESCRIPTION];
-  const price = req.body[INVENTORIES.PRICE];
-  const quantityAvailable = req.body[INVENTORIES.QUANTITY_AVAILABLE];
-  try {
-    if ((await InventoryTable.getInventory(id)) === null) {
-      throw INVALID_INVENTORY_ID_ERROR.type;
-    }
+  const name: string | null = req.body[INVENTORIES.NAME] !== undefined ? req.body[INVENTORIES.NAME] : null;
+  const description: string | null =
+    req.body[INVENTORIES.DESCRIPTION] !== undefined ? req.body[INVENTORIES.DESCRIPTION] : null;
+  const price: number | null = req.body[INVENTORIES.PRICE] !== undefined ? req.body[INVENTORIES.PRICE] : null;
+  const quantityAvailable: number | null =
+    req.body[INVENTORIES.QUANTITY_AVAILABLE] !== undefined ? req.body[INVENTORIES.QUANTITY_AVAILABLE] : null;
 
-    checkType(name, INVENTORIES.NAME, TYPE.STRING);
-    checkType(description, INVENTORIES.DESCRIPTION, TYPE.STRING);
-    checkType(price, INVENTORIES.PRICE, TYPE.NUMBER);
-    checkType(quantityAvailable, INVENTORIES.QUANTITY_AVAILABLE, TYPE.NUMBER);
+  try {
+    if (name !== null) checkType(name, INVENTORIES.NAME, TYPE.STRING);
+    if (description !== null) checkType(description, INVENTORIES.DESCRIPTION, TYPE.STRING);
+    if (price !== null) checkType(price, INVENTORIES.PRICE, TYPE.NUMBER);
+    if (quantityAvailable !== null) checkType(quantityAvailable, INVENTORIES.QUANTITY_AVAILABLE, TYPE.NUMBER);
 
     await InventoryTable.updateInventory(id, name, description, price, quantityAvailable);
 

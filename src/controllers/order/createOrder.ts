@@ -8,19 +8,16 @@ import {
   INVALID_INVENTORY_ID_ERROR,
   AVAILABLE_QUANTITY_ERROR,
   ORDERS,
-  ORDERS_DETAIL,
-  INVENTORIES
+  ORDERS_DETAIL
 } from "../../constants";
 import OrderTable from "../../repositories/orderRepository";
 import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
-import InventoryTable from "../../repositories/inventoryRepository";
-import InventoryQuantity from "../../entities/inventoryQuantity";
 
 async function createOrder(req: Request, res: Response) {
   const customerEmailAddress = req.body[ORDERS.COSUTOMER_EMAIL_ADDRESS];
   const dateOrderPlaced = req.body[ORDERS.DATE_ORDER_PLACED];
   const orderStatus = req.body[ORDERS.ORDER_STATUS];
-  const orderItems = req.body["items"];
+  const orderItems = req.body["details"];
 
   try {
     checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
@@ -29,29 +26,12 @@ async function createOrder(req: Request, res: Response) {
     checkDate(dateOrderPlaced);
     checkType(orderStatus, ORDERS.ORDER_STATUS, TYPE.STRING);
 
-    const orderItemsUpdate: InventoryQuantity[] = [];
-
     await orderItems.forEach(async (orderItem: any) => {
-      const [inventoryId, quantity] = [orderItem[ORDERS_DETAIL.INVNETORY_ID], orderItem[ORDERS_DETAIL.QUANTITY]];
-      const invenotryItem = await InventoryTable.getInventory(inventoryId);
-      if (invenotryItem === null) {
-        throw {
-          error_type: INVALID_INVENTORY_ID_ERROR.type,
-          message: INVALID_DATE_ERROR.message(inventoryId)
-        };
-      }
-      const quantityAvailable = invenotryItem[INVENTORIES.QUANTITY_AVAILABLE];
-      if (quantityAvailable < quantity) {
-        throw {
-          error_type: AVAILABLE_QUANTITY_ERROR.type,
-          message: AVAILABLE_QUANTITY_ERROR.message(inventoryId)
-        };
-      }
-
-      orderItemsUpdate.push(new InventoryQuantity(inventoryId, quantity, quantityAvailable - quantity));
+      checkType(orderItem[ORDERS_DETAIL.INVNETORY_ID], ORDERS_DETAIL.INVNETORY_ID, TYPE.NUMBER);
+      checkType(orderItem[ORDERS_DETAIL.QUANTITY], ORDERS_DETAIL.QUANTITY, TYPE.NUMBER);
     });
 
-    await OrderTable.createOrder(customerEmailAddress, dateOrderPlaced, orderStatus, orderItemsUpdate);
+    await OrderTable.createOrder(customerEmailAddress, dateOrderPlaced, orderStatus, orderStatus);
 
     res.status(200).send("The order is successfully added.");
   } catch (err) {
