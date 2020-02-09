@@ -9,6 +9,8 @@ import {
   selectInventoryItem,
   createInvntoryTable
 } from "../db/invnetoryQueries";
+import { INVALID_INVENTORY_ID_ERROR } from "../constants";
+import { resolvePlugin } from "@babel/core";
 
 class InventoryTable {
   static createInventory(name: String, description: String, price: String, quantityAvailable: String): Promise<void> {
@@ -54,9 +56,14 @@ class InventoryTable {
     );
   }
 
-  static deleteInventry(id: number): Promise<void> {
+  static async deleteInventry(id: number): Promise<void> {
     const db = dBSqlite3();
-    return new Promise((resolve, reject) =>
+    const inventory = await new Promise<any>((resolve, reject) =>
+      db.get(selectInventoryItem(id), (err: Error | null, _inventory: any) => (err ? reject(err) : resolve(_inventory)))
+    );
+    if (inventory === undefined) throw INVALID_INVENTORY_ID_ERROR.type;
+
+    new Promise((resolve, reject) =>
       db.run(deleteInventoryItem(id), (_: RunResult, err: Error | null) => (err ? reject(err) : resolve()))
     );
   }
