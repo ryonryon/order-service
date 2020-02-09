@@ -119,17 +119,45 @@ class OrderTable {
         if (!inputOrderDetails) return resolve();
 
         inputOrderDetails.forEach(async inputOrderDetail => {
-          const orderDetail = await new Promise<any>((resolve, _) => {
-            db.get(
-              selectOrderDetail(orderId, inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]),
-              (err: Error | null, _orderDetail: any) => (err ? reject(err) : resolve(_orderDetail))
-            );
-          });
-
           const inventory = await new Promise<any>((resolve, _) => {
             db.get(
               selectInventoryItem(inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]),
               (err: Error | null, _inventory: any) => (err ? reject(err) : resolve(_inventory))
+            );
+          });
+
+          if (!inputOrderDetail[ORDERS_DETAIL.ORDER_DETAIL_ID]) {
+            if (inventory[INVENTORIES.QUANTITY_AVAILABLE] < inputOrderDetail[ORDERS_DETAIL.QUANTITY])
+              reject(AVAILABLE_QUANTITY_ERROR.type);
+
+            await new Promise((resolve, _) =>
+              db.run(
+                updateInventoryItemQuantiy(
+                  inventory[INVENTORIES.INVNETORY_ID],
+                  inventory[INVENTORIES.QUANTITY_AVAILABLE] - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+                ),
+                (_: RunResult, err: Error | null) => (err ? reject(err) : resolve())
+              )
+            );
+
+            await new Promise((resolve, _) =>
+              db.run(
+                insertOrderDetail(
+                  orderId,
+                  inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
+                  inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+                ),
+                (_: RunResult, err: Error | null) => (err ? reject(err) : resolve())
+              )
+            );
+
+            return;
+          }
+
+          const orderDetail = await new Promise<any>((resolve, _) => {
+            db.get(
+              selectOrderDetail(orderId, inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]),
+              (err: Error | null, _orderDetail: any) => (err ? reject(err) : resolve(_orderDetail))
             );
           });
 
