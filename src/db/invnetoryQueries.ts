@@ -14,7 +14,7 @@ export const qInsertInventoryItem = (
 
 export const qSelectInventoryItems = () => `SELECT * FROM inventories;`;
 
-export const qSelectInventoryItem = (id: Number): string => `SELECT * FROM inventories WHERE inventory_id = ${id};`;
+export const qSelectInventoryItem = `SELECT * FROM inventories WHERE inventory_id = ?;`;
 
 export const qUpdateInventoryItem = (
   id: number,
