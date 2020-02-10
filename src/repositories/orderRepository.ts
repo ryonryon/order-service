@@ -145,10 +145,55 @@ class OrderTable {
   static updateOrderDetail(orderId: number, inventoryId: number, quantity: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise<void>((resolve, reject) =>
-      db.run(qUpdateOrderDetail(orderId, inventoryId, quantity), (_: RunResult, err: Error | null) =>
+      db.run(qUpdateOrderDetail, [quantity, orderId, inventoryId], (_: RunResult, err: Error | null) =>
         err ? reject(err) : resolve()
       )
     );
+  }
+
+  private static updateOrderDetails(orderId: number, inputOrderDetails: any[]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      inputOrderDetails.forEach(async inputOrderDetail => {
+        const inventory = await InventoryTable.getInventory(inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]);
+        if (inventory === null) reject(INVALID_INVENTORY_ID_ERROR.type);
+
+        const orderDetail = await this.getOrderDetail(orderId, inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]);
+
+        if (orderDetail === undefined) {
+          await InventoryTable.updateInventory(
+            inventory[INVENTORIES.INVNETORY_ID],
+            null,
+            null,
+            null,
+            inventory[INVENTORIES.QUANTITY_AVAILABLE] - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+          );
+
+          await this.insertOrderDetail(
+            orderId,
+            inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
+            inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+          );
+        } else {
+          await InventoryTable.updateInventory(
+            inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
+            null,
+            null,
+            null,
+            inventory[INVENTORIES.QUANTITY_AVAILABLE] +
+              orderDetail[ORDERS_DETAIL.QUANTITY] -
+              inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+          );
+
+          await this.updateOrderDetail(
+            orderId,
+            inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
+            inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+          );
+        }
+      });
+
+      return resolve();
+    });
   }
 
   static putOrder(
@@ -166,50 +211,7 @@ class OrderTable {
 
         await this.updateOrder(orderId, customerEmailAddress, dateOrderPlaced, orderStatus);
 
-        if (!inputOrderDetails) return resolve();
-
-        inputOrderDetails.forEach(async inputOrderDetail => {
-          const inventory = await InventoryTable.getInventory(inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]);
-
-          if (!inputOrderDetail[ORDERS_DETAIL.ORDER_DETAIL_ID]) {
-            if (inventory[INVENTORIES.QUANTITY_AVAILABLE] < inputOrderDetail[ORDERS_DETAIL.QUANTITY]) {
-              reject(AVAILABLE_QUANTITY_ERROR.type);
-            }
-
-            await InventoryTable.updateInventory(
-              inventory[INVENTORIES.INVNETORY_ID],
-              null,
-              null,
-              null,
-              inventory[INVENTORIES.QUANTITY_AVAILABLE] - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
-            );
-
-            await this.insertOrderDetail(
-              orderId,
-              inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
-              inputOrderDetail[ORDERS_DETAIL.QUANTITY]
-            );
-
-            return;
-          }
-          const orderDetail = await this.getOrderDetail(orderId, inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID]);
-
-          await InventoryTable.updateInventory(
-            inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
-            null,
-            null,
-            null,
-            inventory[INVENTORIES.QUANTITY_AVAILABLE] +
-              inputOrderDetail[ORDERS_DETAIL.QUANTITY] -
-              orderDetail[ORDERS_DETAIL.QUANTITY]
-          );
-
-          await this.updateOrderDetail(
-            inputOrderDetail[ORDERS_DETAIL.ORDER_ID],
-            inputOrderDetail[ORDERS_DETAIL.INVNETORY_ID],
-            inputOrderDetail[ORDERS_DETAIL.QUANTITY]
-          );
-        });
+        if (inputOrderDetails) await this.updateOrderDetails(orderId, inputOrderDetails);
 
         return resolve();
       });

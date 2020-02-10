@@ -2,9 +2,8 @@ export const qCreateOrderDetailTable = `CREATE TABLE IF NOT EXISTS orders_detail
 
 export const qInsertOrderDetail = `INSERT INTO orders_detail (order_id, inventory_id, quantity) VALUES (?, ?, ?);`;
 
-export const qSelectOrderDetail = `SELECT order_id, inventory_id, quantity FROM orders_detail WHERE order_id = ? AND inventory_id = ?;`;
+export const qSelectOrderDetail = `SELECT * FROM orders_detail WHERE order_id = ? AND inventory_id = ?;`;
 
-export const qUpdateOrderDetail = (orderId: number, inventoryId: number, quantity: number): string =>
-  `UPDATE orders_detail SET quantity = ${quantity} WHERE order_id = ${orderId} AND inventory_id = ${inventoryId};`;
+export const qUpdateOrderDetail = `UPDATE orders_detail SET quantity = ? WHERE order_id = ? AND inventory_id = ?;`;
 
 export const qDeleteOrderDetails = `DELETE FROM orders_detail WHERE order_id = ?;`;
