@@ -1,13 +1,12 @@
-export const makeUpdateItemSyntax = (items: [string, string | number | null][]): string => {
-  return items
-    .filter(item => {
-      const [_, value] = item;
-      return value !== null;
-    })
-    .reduce((merged, nonNullItem) => {
-      const [name, value] = nonNullItem;
-      if (typeof value === "string") return `${merged},${name} = "${value}"`;
-      return `${merged},${name} = ${value}`;
-    }, "")
-    .substring(1);
+export const makeSyntaxAndParams = (id: number, items: [string, string | number | null][]): [string, any[]] => {
+  let syntax = "";
+  const params: any[] = [];
+  for (const item of items) {
+    const [key, value] = item;
+    if (value === null) continue;
+    syntax += `,${key} = ?`;
+    params.push(value);
+  }
+  params.push(id);
+  return [syntax.substring(1), params];
 };

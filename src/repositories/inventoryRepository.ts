@@ -51,10 +51,10 @@ class InventoryTable {
     const inventory = await this.getInventory(id);
     if (inventory === null) throw INVALID_INVENTORY_ID_ERROR.type;
 
+    const [updateinventoryQuery, params] = qUpdateInventoryItem(id, name, description, price, quantityAvailable);
+
     return new Promise((resolve, reject) =>
-      db.run(qUpdateInventoryItem(id, name, description, price, quantityAvailable), (_: RunResult, err: Error | null) =>
-        err ? reject(err) : resolve()
-      )
+      db.run(updateinventoryQuery, params, (_: RunResult, err: Error | null) => (err ? reject(err) : resolve()))
     );
   }
 

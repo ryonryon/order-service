@@ -134,13 +134,11 @@ class OrderTable {
     orderStatus: string | null
   ): Promise<void> {
     const db = dBSqlite3();
+    const [updateOrderQuery, params] = qUpdateOrderItem(orderId, customerEmailAddres, dateOrderPlaced, orderStatus);
     return new Promise((resolve, reject) =>
-      db.run(
-        qUpdateOrderItem(orderId, customerEmailAddres, dateOrderPlaced, orderStatus),
-        (err: Error | null, _: RunResult) => {
-          return err ? reject(err) : resolve();
-        }
-      )
+      db.run(updateOrderQuery, params, (err: Error | null, _: RunResult) => {
+        return err ? reject(err) : resolve();
+      })
     );
   }
 

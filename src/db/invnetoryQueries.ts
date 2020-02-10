@@ -1,4 +1,4 @@
-import { makeUpdateItemSyntax } from "./utils";
+import { makeSyntaxAndParams } from "./utils";
 import { INVENTORIES } from "../constants";
 
 export const qCreateInvntoryTable =
@@ -16,15 +16,15 @@ export const qUpdateInventoryItem = (
   description: string | null,
   price: number | null,
   quantityAvailable: number | null
-): string => {
-  const items = makeUpdateItemSyntax([
+): [string, any[]] => {
+  const [syntax, params] = makeSyntaxAndParams(id, [
     [INVENTORIES.NAME, name],
     [INVENTORIES.DESCRIPTION, description],
     [INVENTORIES.PRICE, price],
     [INVENTORIES.QUANTITY_AVAILABLE, quantityAvailable]
   ]);
 
-  return `UPDATE inventories SET ${items} WHERE inventory_id = ${id};`;
+  return [`UPDATE inventories SET ${syntax} WHERE inventory_id = ?;`, params];
 };
 
 export const qUpdateInventoryItemQuantiy = (id: number, quantityAvailable: number): string =>
