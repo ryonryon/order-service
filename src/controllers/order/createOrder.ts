@@ -31,7 +31,7 @@ async function createOrder(req: Request, res: Response) {
       checkType(orderItem[ORDERS_DETAIL.QUANTITY], ORDERS_DETAIL.QUANTITY, TYPE.NUMBER);
     });
 
-    await OrderTable.createOrder(customerEmailAddress, dateOrderPlaced, orderStatus, orderStatus);
+    await OrderTable.postOrder(customerEmailAddress, dateOrderPlaced, orderStatus, orderStatus);
 
     res.status(200).send("The order is successfully added.");
   } catch (err) {

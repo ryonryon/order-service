@@ -14,7 +14,6 @@ import {
   AVAILABLE_QUANTITY_ERROR
 } from "../../constants";
 import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
-import InventoryTable from "../../repositories/inventoryRepository";
 
 async function updateOrderById(req: Request, res: Response) {
   const orderId = Number(req.params.id);
@@ -54,7 +53,8 @@ async function updateOrderById(req: Request, res: Response) {
         const quantity: number | null =
           inputOrderDetail[ORDERS_DETAIL.QUANTITY] !== undefined ? inputOrderDetail[ORDERS_DETAIL.QUANTITY] : null;
 
-        if (!orderDetailId) checkType(order, ORDERS_DETAIL.ORDER_DETAIL_ID, TYPE.NUMBER);
+        // TODO
+        // if (!orderDetailId) checkType(order, ORDERS_DETAIL.ORDER_DETAIL_ID, TYPE.NUMBER);
         if (!inventoryId) throw INVALID_INVENTORY_ID_ERROR.type;
         if (!quantity) throw AVAILABLE_QUANTITY_ERROR.type;
         checkType(inventoryId, ORDERS_DETAIL.INVNETORY_ID, TYPE.NUMBER);
@@ -62,7 +62,7 @@ async function updateOrderById(req: Request, res: Response) {
       });
     }
 
-    await OrderTable.updateOrder(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, inputOrderDetails);
+    await OrderTable.putOrder(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, inputOrderDetails);
 
     res.status(200).send("The order is successfully updated");
   } catch (err) {

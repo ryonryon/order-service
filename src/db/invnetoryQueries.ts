@@ -33,7 +33,7 @@ export const updateInventoryItem = (
   return `UPDATE inventories SET ${items} WHERE inventory_id = ${id};`;
 };
 
-export const updateInventoryItemQuantiy = (id: number, quantityAvailable: number): string =>
+export const q_updateInventoryItemQuantiy = (id: number, quantityAvailable: number): string =>
   `UPDATE inventories SET quantity_available = ${quantityAvailable} WHERE inventory_id = ${id};`;
 
 export const deleteInventoryItem = (id: Number): string => `DELETE FROM inventories WHERE inventory_id = ${id};`;

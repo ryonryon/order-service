@@ -1,10 +1,10 @@
 import { makeUpdateItemSyntax } from "./utils";
 import { ORDERS, ORDERS_DETAIL } from "../constants";
 
-export const createOrderTable = () =>
+export const q_reateOrderTable = () =>
   `CREATE TABLE IF NOT EXISTS orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, customer_email_address TEXT, date_order_placed TEXT, order_status TEXT);`;
 
-export const insertOrder = (customerEmailAddress: string, dateOrderPlaced: string, orderStatus: string) =>
+export const q_insertOrder = (customerEmailAddress: string, dateOrderPlaced: string, orderStatus: string) =>
   `INSERT INTO orders (customer_email_address, date_order_placed, order_status) VALUES ("${customerEmailAddress}", "${dateOrderPlaced}", "${orderStatus}");`;
 
 export const selectOrders = (): string =>
