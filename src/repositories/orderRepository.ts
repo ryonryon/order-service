@@ -45,7 +45,7 @@ class OrderTable {
   static insertOrder(customerEmailAddress: string, dateOrderPlaced: string, orderStatus: string): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(qInsertOrder(customerEmailAddress, dateOrderPlaced, orderStatus), (err: Error | null) =>
+      db.run(qInsertOrder, [customerEmailAddress, dateOrderPlaced, orderStatus], (err: Error | null) =>
         err ? reject(err) : resolve()
       )
     );
@@ -79,7 +79,6 @@ class OrderTable {
         await this.insertOrder(customerEmailAddress, dateOrderPlaced, orderStatus);
 
         const order = await this.selectNewestOrder();
-
         orderItems.forEach(async orderItem => {
           const [inventoryId, quantity] = [orderItem[ORDERS_DETAIL.INVNETORY_ID], orderItem[ORDERS_DETAIL.QUANTITY]];
           const inventory: any = await InventoryTable.getInventory(inventoryId);

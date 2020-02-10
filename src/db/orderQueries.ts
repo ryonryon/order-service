@@ -4,8 +4,7 @@ import { ORDERS, ORDERS_DETAIL } from "../constants";
 export const qCreateOrderTable = () =>
   `CREATE TABLE IF NOT EXISTS orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, customer_email_address TEXT, date_order_placed TEXT, order_status TEXT);`;
 
-export const qInsertOrder = (customerEmailAddress: string, dateOrderPlaced: string, orderStatus: string) =>
-  `INSERT INTO orders (customer_email_address, date_order_placed, order_status) VALUES ("${customerEmailAddress}", "${dateOrderPlaced}", "${orderStatus}");`;
+export const qInsertOrder = `INSERT INTO orders (customer_email_address, date_order_placed, order_status) VALUES (?, ?, ?);`;
 
 export const qSelectOrders = (): string =>
   `SELECT orders.*, orders_detail.* FROM orders INNER JOIN orders_detail ON orders.order_id = orders_detail.order_id;`;
