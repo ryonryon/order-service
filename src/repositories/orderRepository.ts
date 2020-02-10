@@ -121,7 +121,7 @@ class OrderTable {
   static getOrderDetail(orderId: number, inventoryId: number): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) => {
-      db.get(qSelectOrderDetail(orderId, inventoryId), (err: Error | null, orderDetail: any) =>
+      db.get(qSelectOrderDetail, [orderId, inventoryId], (err: Error | null, orderDetail: any) =>
         err ? reject(err) : resolve(orderDetail)
       );
     });
