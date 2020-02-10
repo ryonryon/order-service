@@ -36,4 +36,4 @@ export const qUpdateInventoryItem = (
 export const qUpdateInventoryItemQuantiy = (id: number, quantityAvailable: number): string =>
   `UPDATE inventories SET quantity_available = ${quantityAvailable} WHERE inventory_id = ${id};`;
 
-export const qDeleteInventoryItem = (id: Number): string => `DELETE FROM inventories WHERE inventory_id = ${id};`;
+export const qDeleteInventoryItem = `DELETE FROM inventories WHERE inventory_id = ?;`;
