@@ -25,7 +25,7 @@ async function updateOrderById(req: Request, res: Response) {
 
   try {
     const order = await OrderTable.getOrder(orderId);
-    if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
+    if (order.length === 0) throw INVALID_ORDER_ID_ERROR.type;
 
     if (customerEmailAddress !== null) {
       checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
@@ -39,7 +39,7 @@ async function updateOrderById(req: Request, res: Response) {
 
     if (orderStatus !== null) checkType(orderStatus, ORDERS.ORDER_STATUS, TYPE.STRING);
 
-    if (inputOrderDetails !== null) {
+    if (inputOrderDetails.length !== 0) {
       inputOrderDetails.forEach(async inputOrderDetail => {
         const orderDetailId: number | null =
           inputOrderDetail[ORDERS_DETAIL.ORDER_DETAIL_ID] !== undefined

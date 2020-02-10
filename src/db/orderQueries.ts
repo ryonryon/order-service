@@ -1,21 +1,21 @@
 import { makeUpdateItemSyntax } from "./utils";
 import { ORDERS, ORDERS_DETAIL } from "../constants";
 
-export const q_createOrderTable = () =>
+export const qCreateOrderTable = () =>
   `CREATE TABLE IF NOT EXISTS orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, customer_email_address TEXT, date_order_placed TEXT, order_status TEXT);`;
 
-export const q_insertOrder = (customerEmailAddress: string, dateOrderPlaced: string, orderStatus: string) =>
+export const qInsertOrder = (customerEmailAddress: string, dateOrderPlaced: string, orderStatus: string) =>
   `INSERT INTO orders (customer_email_address, date_order_placed, order_status) VALUES ("${customerEmailAddress}", "${dateOrderPlaced}", "${orderStatus}");`;
 
-export const q_selectOrders = (): string =>
+export const qSelectOrders = (): string =>
   `SELECT orders.*, orders_detail.* FROM orders INNER JOIN orders_detail ON orders.order_id = orders_detail.order_id;`;
 
-export const q_selectOrder = (id: number): string =>
+export const qSelectOrder = (id: number): string =>
   `SELECT orders.*, orders_detail.* FROM orders INNER JOIN orders_detail ON orders.order_id = orders_detail.order_id WHERE orders.order_id = ${id};`;
 
-export const q_selectOrderNewest = (): string => "SELECT MAX(order_id) as order_id FROM orders";
+export const qSelectOrderNewest = (): string => "SELECT MAX(order_id) as order_id FROM orders";
 
-export const q_updateOrderItem = (
+export const qUpdateOrderItem = (
   id: number,
   customerEmailAddress: string | null = null,
   dateOrderPlaced: string | null = null,
@@ -34,4 +34,4 @@ export const q_updateOrderItem = (
   return `UPDATE orders SET ${items} WHERE order_id = ${id};`;
 };
 
-export const q_deleteOrder = (id: Number): string => `DELETE FROM orders WHERE order_id = ${id};`;
+export const qDeleteOrder = (id: Number): string => `DELETE FROM orders WHERE order_id = ${id};`;
