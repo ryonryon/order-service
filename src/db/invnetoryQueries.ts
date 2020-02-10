@@ -1,18 +1,12 @@
 import { makeUpdateItemSyntax } from "./utils";
 import { INVENTORIES } from "../constants";
 
-export const qCreateInvntoryTable = (): string =>
+export const qCreateInvntoryTable =
   "CREATE TABLE IF NOT EXISTS inventories (inventory_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price INTEGER, quantity_available INTEGER)";
 
-export const qInsertInventoryItem = (
-  name: String,
-  description: String,
-  price: String,
-  quantityAvailable: String
-): string =>
-  `INSERT INTO inventories (name, description, price, quantity_available) VALUES ("${name}", "${description}", ${price}, ${quantityAvailable});`;
+export const qInsertInventoryItem = `INSERT INTO inventories (name, description, price, quantity_available) VALUES (?, ?, ?, ?);`;
 
-export const qSelectInventoryItems = () => `SELECT * FROM inventories;`;
+export const qSelectInventoryItems = `SELECT * FROM inventories;`;
 
 export const qSelectInventoryItem = `SELECT * FROM inventories WHERE inventory_id = ?;`;
 

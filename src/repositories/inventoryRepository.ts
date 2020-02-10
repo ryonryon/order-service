@@ -16,10 +16,10 @@ class InventoryTable {
     const db = dBSqlite3();
     return new Promise((resolve, reject) => {
       db.serialize(() => {
-        db.run(qCreateInvntoryTable(), (_: RunResult, err: Error | null) => {
+        db.run(qCreateInvntoryTable, (_: RunResult, err: Error | null) => {
           if (err) return reject(err);
         });
-        db.run(qInsertInventoryItem(name, description, price, quantityAvailable), (_: RunResult, err: Error | null) =>
+        db.run(qInsertInventoryItem, [name, description, price, quantityAvailable], (_: RunResult, err: Error | null) =>
           err ? reject(err) : resolve()
         );
       });
@@ -29,7 +29,7 @@ class InventoryTable {
   static getInventories(): Promise<any[]> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectInventoryItems(), (err: Error | null, rows: any[]) => (err ? reject(err) : resolve(rows)))
+      db.all(qSelectInventoryItems, (err: Error | null, rows: any[]) => (err ? reject(err) : resolve(rows)))
     );
   }
 
