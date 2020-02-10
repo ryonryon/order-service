@@ -221,13 +221,13 @@ class OrderTable {
   static deleteOrderItem(orderId: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(qDeleteOrder(orderId), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
+      db.run(qDeleteOrder, [orderId], (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
     );
   }
   static deleteOrderItemDetails(orderId: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(qDeleteOrderDetails(orderId), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
+      db.run(qDeleteOrderDetails, [orderId], (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
     );
   }
 

@@ -30,4 +30,4 @@ export const qUpdateOrderItem = (
   return `UPDATE orders SET ${items} WHERE order_id = ${id};`;
 };
 
-export const qDeleteOrder = (id: Number): string => `DELETE FROM orders WHERE order_id = ${id};`;
+export const qDeleteOrder = `DELETE FROM orders WHERE order_id = ?;`;

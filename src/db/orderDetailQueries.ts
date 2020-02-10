@@ -7,5 +7,4 @@ export const qSelectOrderDetail = `SELECT order_id, inventory_id, quantity FROM 
 export const qUpdateOrderDetail = (orderId: number, inventoryId: number, quantity: number): string =>
   `UPDATE orders_detail SET quantity = ${quantity} WHERE order_id = ${orderId} AND inventory_id = ${inventoryId};`;
 
-export const qDeleteOrderDetails = (orderId: number): string =>
-  `DELETE FROM orders_detail WHERE order_id = ${orderId};`;
+export const qDeleteOrderDetails = `DELETE FROM orders_detail WHERE order_id = ?;`;
