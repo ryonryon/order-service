@@ -1,3 +1,5 @@
+import OrderDetail from "./orderDtail";
+
 interface Order {
   orderId: number;
   customtomEmailAddress: string;
@@ -5,11 +7,4 @@ interface Order {
   orderStatus: string;
   details: OrderDetail[];
 }
-
-interface OrderDetail {
-  orderDetailId: number;
-  inventoryId: number;
-  quantity: number;
-}
-
 export default Order;

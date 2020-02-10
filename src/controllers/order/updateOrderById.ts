@@ -9,12 +9,10 @@ import {
   CONNECTION_ERROR,
   ORDERS,
   ORDERS_DETAIL,
-  INVENTORIES,
   INVALID_INVENTORY_ID_ERROR,
   AVAILABLE_QUANTITY_ERROR
 } from "../../constants";
 import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
-import InventoryTable from "../../repositories/inventoryRepository";
 
 async function updateOrderById(req: Request, res: Response) {
   const orderId = Number(req.params.id);
@@ -27,7 +25,7 @@ async function updateOrderById(req: Request, res: Response) {
 
   try {
     const order = await OrderTable.getOrder(orderId);
-    if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
+    if (order.length === 0) throw INVALID_ORDER_ID_ERROR.type;
 
     if (customerEmailAddress !== null) {
       checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
@@ -41,7 +39,7 @@ async function updateOrderById(req: Request, res: Response) {
 
     if (orderStatus !== null) checkType(orderStatus, ORDERS.ORDER_STATUS, TYPE.STRING);
 
-    if (inputOrderDetails !== null) {
+    if (inputOrderDetails.length !== 0) {
       inputOrderDetails.forEach(async inputOrderDetail => {
         const orderDetailId: number | null =
           inputOrderDetail[ORDERS_DETAIL.ORDER_DETAIL_ID] !== undefined
@@ -54,7 +52,7 @@ async function updateOrderById(req: Request, res: Response) {
         const quantity: number | null =
           inputOrderDetail[ORDERS_DETAIL.QUANTITY] !== undefined ? inputOrderDetail[ORDERS_DETAIL.QUANTITY] : null;
 
-        if (!orderDetailId) checkType(order, ORDERS_DETAIL.ORDER_DETAIL_ID, TYPE.NUMBER);
+        if (orderDetailId) checkType(orderDetailId, ORDERS_DETAIL.ORDER_DETAIL_ID, TYPE.NUMBER);
         if (!inventoryId) throw INVALID_INVENTORY_ID_ERROR.type;
         if (!quantity) throw AVAILABLE_QUANTITY_ERROR.type;
         checkType(inventoryId, ORDERS_DETAIL.INVNETORY_ID, TYPE.NUMBER);
@@ -62,7 +60,7 @@ async function updateOrderById(req: Request, res: Response) {
       });
     }
 
-    await OrderTable.updateOrder(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, inputOrderDetails);
+    await OrderTable.putOrder(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, inputOrderDetails);
 
     res.status(200).send("The order is successfully updated");
   } catch (err) {

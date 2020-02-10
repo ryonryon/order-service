@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import InventoryTable from "../../repositories/inventoryRepository";
 import { INVALID_ITEM_TYPE_ERROR, INVALID_INVENTORY_ID_ERROR, CONNECTION_ERROR, INVENTORIES } from "../../constants";
 import { checkType, TYPE } from "../../validations";

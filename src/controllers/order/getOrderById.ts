@@ -7,7 +7,7 @@ async function getOrderById(req: Request, res: Response) {
   const id = Number(req.params.id);
   try {
     const order = await OrderTable.getOrder(id);
-    if (order === undefined) throw INVALID_ORDER_ID_ERROR.type;
+    if (order.length === 0) throw INVALID_ORDER_ID_ERROR.type;
 
     res.status(200).send(order);
   } catch (err) {

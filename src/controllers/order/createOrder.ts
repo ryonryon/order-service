@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import OrderTable from "../../repositories/orderRepository";
 import {
   CONNECTION_ERROR,
   INVALID_ITEM_TYPE_ERROR,
@@ -10,7 +11,6 @@ import {
   ORDERS,
   ORDERS_DETAIL
 } from "../../constants";
-import OrderTable from "../../repositories/orderRepository";
 import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
 
 async function createOrder(req: Request, res: Response) {
@@ -31,7 +31,7 @@ async function createOrder(req: Request, res: Response) {
       checkType(orderItem[ORDERS_DETAIL.QUANTITY], ORDERS_DETAIL.QUANTITY, TYPE.NUMBER);
     });
 
-    await OrderTable.createOrder(customerEmailAddress, dateOrderPlaced, orderStatus, orderStatus);
+    await OrderTable.postOrder(customerEmailAddress, dateOrderPlaced, orderStatus, orderStatus);
 
     res.status(200).send("The order is successfully added.");
   } catch (err) {
