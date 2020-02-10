@@ -1,22 +1,21 @@
 import { RunResult } from "sqlite3";
 
 import dBSqlite3 from "../db/dbSqlite3";
-import { q_updateInventoryItemQuantiy, selectInventoryItem } from "../db/invnetoryQueries";
 import {
   q_insertOrderDetail,
   q_createOrderDetailTable,
-  selectOrderDetail,
+  q_selectOrderDetail,
   q_updateOrderDetail,
-  deleteOrderDetails
+  q_deleteOrderDetails
 } from "../db/orderDetailQueries";
 import {
   q_reateOrderTable,
-  selectOrders,
-  selectOrder,
-  selectOrderNewest,
+  q_selectOrders,
+  q_selectOrder,
+  q_selectOrderNewest,
   q_insertOrder,
-  updateOrderItem,
-  deleteOrder
+  q_updateOrderItem,
+  q_deleteOrder
 } from "../db/orderQueries";
 import {
   ORDERS,
@@ -55,7 +54,7 @@ class OrderTable {
   static selectNewestOrder(): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.get(selectOrderNewest(), (err, row) => (err ? reject(err) : resolve(row)))
+      db.get(q_selectOrderNewest(), (err, row) => (err ? reject(err) : resolve(row)))
     );
   }
 
@@ -109,21 +108,21 @@ class OrderTable {
   static getOrders(): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(selectOrders(), (err, orders) => (err ? reject(err) : resolve(orders)))
+      db.all(q_selectOrders(), (err, orders) => (err ? reject(err) : resolve(orders)))
     );
   }
 
   static getOrder(id: number): Promise<any[]> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(selectOrder(id), (err, orders) => (err ? reject(err) : resolve(orders)))
+      db.all(q_selectOrder(id), (err, orders) => (err ? reject(err) : resolve(orders)))
     );
   }
 
   static getOrderDetail(orderId: number, inventoryId: number): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) => {
-      db.get(selectOrderDetail(orderId, inventoryId), (err: Error | null, orderDetail: any) =>
+      db.get(q_selectOrderDetail(orderId, inventoryId), (err: Error | null, orderDetail: any) =>
         err ? reject(err) : resolve(orderDetail)
       );
     });
@@ -138,7 +137,7 @@ class OrderTable {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
       db.run(
-        updateOrderItem(orderId, customerEmailAddres, dateOrderPlaced, orderStatus),
+        q_updateOrderItem(orderId, customerEmailAddres, dateOrderPlaced, orderStatus),
         (err: Error | null, _: RunResult) => {
           return err ? reject(err) : resolve();
         }
@@ -222,13 +221,13 @@ class OrderTable {
   static deleteOrderItem(orderId: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(deleteOrder(orderId), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
+      db.run(q_deleteOrder(orderId), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
     );
   }
   static deleteOrderItemDetails(orderId: number): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(deleteOrderDetails(orderId), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
+      db.run(q_deleteOrderDetails(orderId), (err: Error | null, _: RunResult) => (err ? reject(err) : resolve()))
     );
   }
 

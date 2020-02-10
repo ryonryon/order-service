@@ -7,15 +7,15 @@ export const q_reateOrderTable = () =>
 export const q_insertOrder = (customerEmailAddress: string, dateOrderPlaced: string, orderStatus: string) =>
   `INSERT INTO orders (customer_email_address, date_order_placed, order_status) VALUES ("${customerEmailAddress}", "${dateOrderPlaced}", "${orderStatus}");`;
 
-export const selectOrders = (): string =>
+export const q_selectOrders = (): string =>
   `SELECT orders.*, orders_detail.* FROM orders INNER JOIN orders_detail ON orders.order_id = orders_detail.order_id;`;
 
-export const selectOrder = (id: number): string =>
+export const q_selectOrder = (id: number): string =>
   `SELECT orders.*, orders_detail.* FROM orders INNER JOIN orders_detail ON orders.order_id = orders_detail.order_id WHERE orders.order_id = ${id};`;
 
-export const selectOrderNewest = (): string => "SELECT MAX(order_id) as order_id FROM orders";
+export const q_selectOrderNewest = (): string => "SELECT MAX(order_id) as order_id FROM orders";
 
-export const updateOrderItem = (
+export const q_updateOrderItem = (
   id: number,
   customerEmailAddress: string | null = null,
   dateOrderPlaced: string | null = null,
@@ -34,4 +34,4 @@ export const updateOrderItem = (
   return `UPDATE orders SET ${items} WHERE order_id = ${id};`;
 };
 
-export const deleteOrder = (id: Number): string => `DELETE FROM orders WHERE order_id = ${id};`;
+export const q_deleteOrder = (id: Number): string => `DELETE FROM orders WHERE order_id = ${id};`;

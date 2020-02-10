@@ -53,8 +53,7 @@ async function updateOrderById(req: Request, res: Response) {
         const quantity: number | null =
           inputOrderDetail[ORDERS_DETAIL.QUANTITY] !== undefined ? inputOrderDetail[ORDERS_DETAIL.QUANTITY] : null;
 
-        // TODO
-        // if (!orderDetailId) checkType(order, ORDERS_DETAIL.ORDER_DETAIL_ID, TYPE.NUMBER);
+        if (orderDetailId) checkType(orderDetailId, ORDERS_DETAIL.ORDER_DETAIL_ID, TYPE.NUMBER);
         if (!inventoryId) throw INVALID_INVENTORY_ID_ERROR.type;
         if (!quantity) throw AVAILABLE_QUANTITY_ERROR.type;
         checkType(inventoryId, ORDERS_DETAIL.INVNETORY_ID, TYPE.NUMBER);
