@@ -61,7 +61,9 @@ class OrderTable {
   static insertOrderDetail(orderId: number, inventoryId: number, quantity: number): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(qInsertOrderDetail(orderId, inventoryId, quantity), (err: Error | null) => (err ? reject(err) : resolve()))
+      db.run(qInsertOrderDetail, [orderId, inventoryId, quantity], (err: Error | null) =>
+        err ? reject(err) : resolve()
+      )
     );
   }
 
