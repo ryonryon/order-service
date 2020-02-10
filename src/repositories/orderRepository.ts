@@ -31,14 +31,14 @@ class OrderTable {
   static createOrdersTable(): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(qCreateOrderTable(), (err: Error | null) => (err ? reject(err) : resolve()))
+      db.run(qCreateOrderTable, (err: Error | null) => (err ? reject(err) : resolve()))
     );
   }
 
   static createOrderDetailTable(): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(qCreateOrderDetailTable(), (err: Error | null) => (err ? reject(err) : resolve()))
+      db.run(qCreateOrderDetailTable, (err: Error | null) => (err ? reject(err) : resolve()))
     );
   }
 
@@ -54,7 +54,7 @@ class OrderTable {
   static selectNewestOrder(): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.get(qSelectOrderNewest(), (err, row) => (err ? reject(err) : resolve(row)))
+      db.get(qSelectOrderNewest, (err, row) => (err ? reject(err) : resolve(row)))
     );
   }
 
@@ -107,14 +107,14 @@ class OrderTable {
   static getOrders(): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectOrders(), (err, orders) => (err ? reject(err) : resolve(orders)))
+      db.all(qSelectOrders, (err, orders) => (err ? reject(err) : resolve(orders)))
     );
   }
 
   static getOrder(id: number): Promise<any[]> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectOrder(id), (err, orders) => (err ? reject(err) : resolve(orders)))
+      db.all(qSelectOrder, [id], (err, orders) => (err ? reject(err) : resolve(orders)))
     );
   }
 
