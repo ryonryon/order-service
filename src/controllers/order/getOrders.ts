@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
-import { CONNECTION_ERROR } from "../../constants";
 import OrderTable from "../../repositories/orderRepository";
+import { CONNECTION_ERROR } from "../../constants";
 
 async function getOrders(_: Request, res: Response) {
   try {

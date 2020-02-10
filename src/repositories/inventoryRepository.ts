@@ -3,7 +3,7 @@ import { RunResult } from "sqlite3";
 import dBSqlite3 from "../db/dbSqlite3";
 import {
   q_selectInventoryItems,
-  insertInventoryItem,
+  q_insertInventoryItem,
   q_deleteInventoryItem,
   q_updateInventoryItem,
   q_selectInventoryItem,
@@ -19,7 +19,7 @@ class InventoryTable {
         db.run(q_createInvntoryTable(), (_: RunResult, err: Error | null) => {
           if (err) return reject(err);
         });
-        db.run(insertInventoryItem(name, description, price, quantityAvailable), (_: RunResult, err: Error | null) =>
+        db.run(q_insertInventoryItem(name, description, price, quantityAvailable), (_: RunResult, err: Error | null) =>
           err ? reject(err) : resolve()
         );
       });

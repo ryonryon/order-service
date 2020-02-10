@@ -4,7 +4,7 @@ import { INVENTORIES } from "../constants";
 export const q_createInvntoryTable = (): string =>
   "CREATE TABLE IF NOT EXISTS inventories (inventory_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price INTEGER, quantity_available INTEGER)";
 
-export const insertInventoryItem = (
+export const q_insertInventoryItem = (
   name: String,
   description: String,
   price: String,
@@ -37,6 +37,3 @@ export const q_updateInventoryItemQuantiy = (id: number, quantityAvailable: numb
   `UPDATE inventories SET quantity_available = ${quantityAvailable} WHERE inventory_id = ${id};`;
 
 export const q_deleteInventoryItem = (id: Number): string => `DELETE FROM inventories WHERE inventory_id = ${id};`;
-
-export const q_getInventoryItemAvarability = (name: String, quantity: Number): string =>
-  `SELECT count(*) FROM inventories WHERE name = "${name}" AND ${quantity} <= quantity_available;`;

@@ -9,7 +9,7 @@ import {
   q_deleteOrderDetails
 } from "../db/orderDetailQueries";
 import {
-  q_reateOrderTable,
+  q_createOrderTable,
   q_selectOrders,
   q_selectOrder,
   q_selectOrderNewest,
@@ -31,7 +31,7 @@ class OrderTable {
   static createOrdersTable(): Promise<void> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.run(q_reateOrderTable(), (err: Error | null) => (err ? reject(err) : resolve()))
+      db.run(q_createOrderTable(), (err: Error | null) => (err ? reject(err) : resolve()))
     );
   }
 
