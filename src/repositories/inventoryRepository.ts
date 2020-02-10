@@ -16,10 +16,10 @@ class InventoryTable {
     const db = dBSqlite3();
     return new Promise((resolve, reject) => {
       db.serialize(() => {
-        db.run(qCreateInvntoryTable(), (_: RunResult, err: Error | null) => {
+        db.run(qCreateInvntoryTable, (_: RunResult, err: Error | null) => {
           if (err) return reject(err);
         });
-        db.run(qInsertInventoryItem(name, description, price, quantityAvailable), (_: RunResult, err: Error | null) =>
+        db.run(qInsertInventoryItem, [name, description, price, quantityAvailable], (_: RunResult, err: Error | null) =>
           err ? reject(err) : resolve()
         );
       });
@@ -29,14 +29,14 @@ class InventoryTable {
   static getInventories(): Promise<any[]> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectInventoryItems(), (err: Error | null, rows: any[]) => (err ? reject(err) : resolve(rows)))
+      db.all(qSelectInventoryItems, (err: Error | null, rows: any[]) => (err ? reject(err) : resolve(rows)))
     );
   }
 
   static getInventory(id: number): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.get(qSelectInventoryItem(id), (err: Error | null, row: any) => (err ? reject(err) : resolve(row)))
+      db.get(qSelectInventoryItem, [id], (err: Error | null, row: any) => (err ? reject(err) : resolve(row)))
     );
   }
 
@@ -51,10 +51,10 @@ class InventoryTable {
     const inventory = await this.getInventory(id);
     if (inventory === null) throw INVALID_INVENTORY_ID_ERROR.type;
 
+    const [updateinventoryQuery, params] = qUpdateInventoryItem(id, name, description, price, quantityAvailable);
+
     return new Promise((resolve, reject) =>
-      db.run(qUpdateInventoryItem(id, name, description, price, quantityAvailable), (_: RunResult, err: Error | null) =>
-        err ? reject(err) : resolve()
-      )
+      db.run(updateinventoryQuery, params, (_: RunResult, err: Error | null) => (err ? reject(err) : resolve()))
     );
   }
 
@@ -64,7 +64,7 @@ class InventoryTable {
     if (inventory === null) throw INVALID_INVENTORY_ID_ERROR.type;
 
     return new Promise((resolve, reject) =>
-      db.run(qDeleteInventoryItem(id), (_: RunResult, err: Error | null) => (err ? reject(err) : resolve()))
+      db.run(qDeleteInventoryItem, [id], (_: RunResult, err: Error | null) => (err ? reject(err) : resolve()))
     );
   }
 }
