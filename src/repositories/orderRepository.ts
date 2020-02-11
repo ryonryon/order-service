@@ -20,6 +20,8 @@ import {
 import { INVALID_INVENTORY_ID_ERROR, AVAILABLE_QUANTITY_ERROR, INVALID_ORDER_ID_ERROR } from "../constants/errors";
 import { ORDERS, ORDERS_DETAIL, INVENTORIES } from "../constants/tables";
 import InventoryTable from "./inventoryRepository";
+import Order from "../entities/order";
+import OrderDetail from "../entities/orderDtail";
 
 class OrderTable {
   static createOrdersTable(): Promise<void> {
@@ -105,10 +107,30 @@ class OrderTable {
     );
   }
 
-  static getOrder(id: number): Promise<any[]> {
+  static getOrder(id: number): Promise<Order> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectOrder, [id], (err, orders) => (err ? reject(err) : resolve(orders)))
+      db.all(qSelectOrder, [id], (err, orders) =>
+        err
+          ? reject(err)
+          : resolve(
+              new Order(
+                orders[0][ORDERS.ORDER_ID],
+                orders[0][ORDERS.COSUTOMER_EMAIL_ADDRESS],
+                orders[0][ORDERS.DATE_ORDER_PLACED],
+                orders[0][ORDERS.ORDER_STATUS],
+                orders.map(
+                  (orderDetail: any) =>
+                    new OrderDetail(
+                      orderDetail[ORDERS_DETAIL.ORDER_DETAIL_ID],
+                      orderDetail[ORDERS_DETAIL.ORDER_ID],
+                      orderDetail[ORDERS_DETAIL.INVNETORY_ID],
+                      orderDetail[ORDERS_DETAIL.QUANTITY]
+                    )
+                )
+              )
+            )
+      )
     );
   }
 
@@ -199,7 +221,7 @@ class OrderTable {
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
         const order = await this.getOrder(orderId);
-        if (order.length === 0) reject(INVALID_ORDER_ID_ERROR.type);
+        if (order === null) reject(INVALID_ORDER_ID_ERROR.type);
 
         await this.updateOrder(orderId, customerEmailAddress, dateOrderPlaced, orderStatus);
 
@@ -229,18 +251,18 @@ class OrderTable {
       db.serialize(async () => {
         const order = await this.getOrder(orderId);
 
-        if (order.length === 0) reject(INVALID_ORDER_ID_ERROR.type);
+        if (order === null) reject(INVALID_ORDER_ID_ERROR.type);
 
         await new Promise(async (resolve, _) => {
-          order.forEach(async orderDetail => {
-            const inventory = await InventoryTable.getInventory(orderDetail[ORDERS_DETAIL.INVNETORY_ID]);
+          order.details.forEach(async orderDetail => {
+            const inventory = await InventoryTable.getInventory(orderDetail.inventoryId);
 
             await InventoryTable.updateInventory(
-              orderDetail[ORDERS_DETAIL.INVNETORY_ID],
+              orderDetail.inventoryId,
               null,
               null,
               null,
-              inventory.quantityAvailable + orderDetail[ORDERS_DETAIL.QUANTITY]
+              inventory.quantityAvailable + orderDetail.quantity
             );
           });
           resolve();

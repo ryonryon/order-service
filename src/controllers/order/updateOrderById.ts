@@ -24,7 +24,7 @@ async function updateOrderById(req: Request, res: Response) {
 
   try {
     const order = await OrderTable.getOrder(orderId);
-    if (order.length === 0) throw INVALID_ORDER_ID_ERROR.type;
+    if (order === null) throw INVALID_ORDER_ID_ERROR.type;
 
     if (customerEmailAddress !== null) {
       checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
