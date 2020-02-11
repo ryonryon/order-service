@@ -10,7 +10,8 @@ export enum ORDERS {
   ORDER_ID = "order_id",
   COSUTOMER_EMAIL_ADDRESS = "customer_email_address",
   DATE_ORDER_PLACED = "date_order_placed",
-  ORDER_STATUS = "order_status"
+  ORDER_STATUS = "order_status",
+  DETAILS = "details"
 }
 
 export enum ORDERS_DETAIL {

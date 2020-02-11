@@ -16,7 +16,7 @@ async function createOrder(req: Request, res: Response) {
   const customerEmailAddress = req.body[ORDERS.COSUTOMER_EMAIL_ADDRESS];
   const dateOrderPlaced = req.body[ORDERS.DATE_ORDER_PLACED];
   const orderStatus = req.body[ORDERS.ORDER_STATUS];
-  const orderItems = req.body["details"];
+  const orderItems = req.body[ORDERS.DETAILS];
 
   try {
     checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);

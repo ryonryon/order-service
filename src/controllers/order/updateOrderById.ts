@@ -20,7 +20,7 @@ async function updateOrderById(req: Request, res: Response) {
   const dateOrderPlaced: string | null =
     req.body[ORDERS.DATE_ORDER_PLACED] !== undefined ? req.body[ORDERS.DATE_ORDER_PLACED] : null;
   const orderStatus: string | null = req.body[ORDERS.ORDER_STATUS] !== undefined ? req.body[ORDERS.ORDER_STATUS] : null;
-  const inputOrderDetails: any[] = req.body["details"] !== undefined ? req.body["details"] : null;
+  const inputOrderDetails: any[] = req.body[ORDERS.DETAILS] !== undefined ? req.body[ORDERS.DETAILS] : null;
 
   try {
     const order = await OrderTable.getOrder(orderId);
