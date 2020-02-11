@@ -155,11 +155,11 @@ class OrderTable {
 
         if (orderDetail === undefined) {
           await InventoryTable.updateInventory(
-            inventory[INVENTORIES.INVNETORY_ID],
+            inventory.inventoryId,
             null,
             null,
             null,
-            inventory[INVENTORIES.QUANTITY_AVAILABLE] - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+            inventory.quantityAvailable - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
           );
 
           await this.insertOrderDetail(
@@ -173,9 +173,7 @@ class OrderTable {
             null,
             null,
             null,
-            inventory[INVENTORIES.QUANTITY_AVAILABLE] +
-              orderDetail[ORDERS_DETAIL.QUANTITY] -
-              inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+            inventory.quantityAvailable + orderDetail[ORDERS_DETAIL.QUANTITY] - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
           );
 
           await this.updateOrderDetail(
@@ -242,7 +240,7 @@ class OrderTable {
               null,
               null,
               null,
-              inventory[INVENTORIES.QUANTITY_AVAILABLE] + orderDetail[ORDERS_DETAIL.QUANTITY]
+              inventory.quantityAvailable + orderDetail[ORDERS_DETAIL.QUANTITY]
             );
           });
           resolve();

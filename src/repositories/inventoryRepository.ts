@@ -10,6 +10,7 @@ import {
   qCreateInvntoryTable
 } from "../db/invnetoryQueries";
 import { INVALID_INVENTORY_ID_ERROR } from "../constants/errors";
+import Inventory from "../entities/inventory";
 
 class InventoryTable {
   static createInventory(name: String, description: String, price: String, quantityAvailable: String): Promise<void> {
@@ -33,10 +34,14 @@ class InventoryTable {
     );
   }
 
-  static getInventory(id: number): Promise<any> {
+  static getInventory(id: number): Promise<Inventory> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.get(qSelectInventoryItem, [id], (err: Error | null, row: any) => (err ? reject(err) : resolve(row)))
+      db.get(qSelectInventoryItem, [id], (err: Error | null, row: any) => {
+        err
+          ? reject(err)
+          : resolve(new Inventory(row.inventory_id, row.name, row.description, row.price, row.quantity_available));
+      })
     );
   }
 

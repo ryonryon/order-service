@@ -9,7 +9,7 @@ async function getInventoryById(req: Request, res: Response) {
     const inventry = await InventoryTable.getInventory(id);
     if (inventry === null) throw INVALID_INVENTORY_ID_ERROR.type;
 
-    res.status(200).send(inventry);
+    res.status(200).send(inventry.inventoryObject);
   } catch (err) {
     if (err === INVALID_INVENTORY_ID_ERROR.type) {
       res.status(400).send(INVALID_INVENTORY_ID_ERROR.message(id));
