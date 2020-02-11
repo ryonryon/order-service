@@ -27,10 +27,19 @@ class InventoryTable {
     });
   }
 
-  static getInventories(): Promise<any[]> {
+  static getInventories(): Promise<Inventory[]> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectInventoryItems, (err: Error | null, rows: any[]) => (err ? reject(err) : resolve(rows)))
+      db.all(qSelectInventoryItems, (err: Error | null, rows: any[]) =>
+        err
+          ? reject(err)
+          : resolve(
+              rows.map(
+                (row: any) =>
+                  new Inventory(row.inventory_id, row.name, row.description, row.price, row.quantity_available)
+              )
+            )
+      )
     );
   }
 
