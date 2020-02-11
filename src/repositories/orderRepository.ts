@@ -98,7 +98,7 @@ class OrderTable {
     });
   }
 
-  static getOrders(): Promise<any> {
+  static getOrders(): Promise<any[]> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
       db.all(qSelectOrders, (err, orders) => (err ? reject(err) : resolve(orders)))
@@ -115,8 +115,8 @@ class OrderTable {
   static getOrderDetail(orderId: number, inventoryId: number): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) => {
-      db.get(qSelectOrderDetail, [orderId, inventoryId], (err: Error | null, orderDetail: any) =>
-        err ? reject(err) : resolve(orderDetail)
+      db.get(qSelectOrderDetail, [orderId, inventoryId], (err: Error | null, orderDetails: any) =>
+        err ? reject(err) : resolve(orderDetails)
       );
     });
   }
