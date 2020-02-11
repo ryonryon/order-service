@@ -17,15 +17,11 @@ import {
   qUpdateOrderItem,
   qDeleteOrder
 } from "../db/orderQueries";
-import {
-  ORDERS,
-  ORDERS_DETAIL,
-  INVENTORIES,
-  INVALID_INVENTORY_ID_ERROR,
-  AVAILABLE_QUANTITY_ERROR,
-  INVALID_ORDER_ID_ERROR
-} from "../constants";
+import { INVALID_INVENTORY_ID_ERROR, AVAILABLE_QUANTITY_ERROR, INVALID_ORDER_ID_ERROR } from "../constants/errors";
+import { ORDERS, ORDERS_DETAIL, INVENTORIES } from "../constants/tables";
 import InventoryTable from "./inventoryRepository";
+import Order from "../entities/order";
+import OrderDetail from "../entities/orderDtail";
 
 class OrderTable {
   static createOrdersTable(): Promise<void> {
@@ -104,25 +100,79 @@ class OrderTable {
     });
   }
 
-  static getOrders(): Promise<any> {
+  static getOrders(): Promise<Order[]> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectOrders, (err, orders) => (err ? reject(err) : resolve(orders)))
+      db.all(qSelectOrders, (err, _orders) => {
+        if (err) return reject(err);
+        const orders: Order[] = [];
+        let orderDetails: OrderDetail[] = [];
+
+        let orderId = _orders[0][ORDERS.ORDER_ID];
+        let customerEmailAddress = _orders[0][ORDERS.COSUTOMER_EMAIL_ADDRESS];
+        let dateOrderPlaced = _orders[0][ORDERS.DATE_ORDER_PLACED];
+        let orderStatus = _orders[0][ORDERS.ORDER_STATUS];
+
+        _orders.forEach((_order: any) => {
+          if (orderId !== _order[ORDERS.ORDER_ID]) {
+            orders.push(new Order(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, orderDetails));
+            orderId = _order[ORDERS.ORDER_ID];
+            customerEmailAddress = _order[ORDERS.COSUTOMER_EMAIL_ADDRESS];
+            dateOrderPlaced = _order[ORDERS.DATE_ORDER_PLACED];
+            orderStatus = _order[ORDERS.ORDER_STATUS];
+            orderDetails = [];
+          }
+
+          orderDetails.push(
+            new OrderDetail(
+              _order[ORDERS_DETAIL.ORDER_DETAIL_ID],
+              _order[ORDERS.ORDER_ID],
+              _order[ORDERS_DETAIL.INVNETORY_ID],
+              _order[ORDERS_DETAIL.QUANTITY]
+            )
+          );
+        });
+        orders.push(new Order(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, orderDetails));
+
+        return resolve(orders);
+      })
     );
   }
 
-  static getOrder(id: number): Promise<any[]> {
+  static getOrder(id: number): Promise<Order | null> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectOrder, [id], (err, orders) => (err ? reject(err) : resolve(orders)))
+      db.all(qSelectOrder, [id], (err, orders) =>
+        err
+          ? reject(err)
+          : orders.length === 0
+          ? resolve(null)
+          : resolve(
+              new Order(
+                orders[0][ORDERS.ORDER_ID],
+                orders[0][ORDERS.COSUTOMER_EMAIL_ADDRESS],
+                orders[0][ORDERS.DATE_ORDER_PLACED],
+                orders[0][ORDERS.ORDER_STATUS],
+                orders.map(
+                  (orderDetail: any) =>
+                    new OrderDetail(
+                      orderDetail[ORDERS_DETAIL.ORDER_DETAIL_ID],
+                      orderDetail[ORDERS_DETAIL.ORDER_ID],
+                      orderDetail[ORDERS_DETAIL.INVNETORY_ID],
+                      orderDetail[ORDERS_DETAIL.QUANTITY]
+                    )
+                )
+              )
+            )
+      )
     );
   }
 
   static getOrderDetail(orderId: number, inventoryId: number): Promise<any> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) => {
-      db.get(qSelectOrderDetail, [orderId, inventoryId], (err: Error | null, orderDetail: any) =>
-        err ? reject(err) : resolve(orderDetail)
+      db.get(qSelectOrderDetail, [orderId, inventoryId], (err: Error | null, orderDetails: any) =>
+        err ? reject(err) : resolve(orderDetails)
       );
     });
   }
@@ -161,11 +211,11 @@ class OrderTable {
 
         if (orderDetail === undefined) {
           await InventoryTable.updateInventory(
-            inventory[INVENTORIES.INVNETORY_ID],
+            inventory!.inventoryId,
             null,
             null,
             null,
-            inventory[INVENTORIES.QUANTITY_AVAILABLE] - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+            inventory!.quantityAvailable - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
           );
 
           await this.insertOrderDetail(
@@ -179,7 +229,7 @@ class OrderTable {
             null,
             null,
             null,
-            inventory[INVENTORIES.QUANTITY_AVAILABLE] +
+            inventory!.quantityAvailable +
               orderDetail[ORDERS_DETAIL.QUANTITY] -
               inputOrderDetail[ORDERS_DETAIL.QUANTITY]
           );
@@ -207,7 +257,7 @@ class OrderTable {
     return new Promise((resolve, reject) => {
       db.serialize(async () => {
         const order = await this.getOrder(orderId);
-        if (order.length === 0) reject(INVALID_ORDER_ID_ERROR.type);
+        if (order === null) reject(INVALID_ORDER_ID_ERROR.type);
 
         await this.updateOrder(orderId, customerEmailAddress, dateOrderPlaced, orderStatus);
 
@@ -237,18 +287,18 @@ class OrderTable {
       db.serialize(async () => {
         const order = await this.getOrder(orderId);
 
-        if (order.length === 0) reject(INVALID_ORDER_ID_ERROR.type);
+        if (order === null) reject(INVALID_ORDER_ID_ERROR.type);
 
         await new Promise(async (resolve, _) => {
-          order.forEach(async orderDetail => {
-            const inventory = await InventoryTable.getInventory(orderDetail[ORDERS_DETAIL.INVNETORY_ID]);
+          order!.details.forEach(async orderDetail => {
+            const inventory = await InventoryTable.getInventory(orderDetail.inventoryId);
 
             await InventoryTable.updateInventory(
-              orderDetail[ORDERS_DETAIL.INVNETORY_ID],
+              orderDetail.inventoryId,
               null,
               null,
               null,
-              inventory[INVENTORIES.QUANTITY_AVAILABLE] + orderDetail[ORDERS_DETAIL.QUANTITY]
+              inventory!.quantityAvailable + orderDetail.quantity
             );
           });
           resolve();

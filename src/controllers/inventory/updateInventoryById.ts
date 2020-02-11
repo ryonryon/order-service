@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 
 import InventoryTable from "../../repositories/inventoryRepository";
-import { INVALID_ITEM_TYPE_ERROR, INVALID_INVENTORY_ID_ERROR, CONNECTION_ERROR, INVENTORIES } from "../../constants";
-import { checkType, TYPE } from "../../validations";
+import { INVALID_ITEM_TYPE_ERROR, INVALID_INVENTORY_ID_ERROR, INERNAL_SERVER_ERROR } from "../../constants/errors";
+import { INVENTORIES } from "../../constants/tables";
+import { checkType, TYPE } from "../validations";
 
 async function updateInventoryById(req: Request, res: Response) {
   const id = Number(req.params.id);
@@ -27,7 +28,7 @@ async function updateInventoryById(req: Request, res: Response) {
       res.status(400).send(INVALID_INVENTORY_ID_ERROR.message(id));
     } else if (err.error_type === INVALID_ITEM_TYPE_ERROR.type) {
       res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
-    } else res.status(400).send(CONNECTION_ERROR.message());
+    } else res.status(400).send(INERNAL_SERVER_ERROR.message());
   }
 }
 

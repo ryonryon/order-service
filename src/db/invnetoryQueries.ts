@@ -1,5 +1,5 @@
 import { makeSyntaxAndParams } from "./utils";
-import { INVENTORIES } from "../constants";
+import { INVENTORIES } from "../constants/tables";
 
 export const qCreateInvntoryTable =
   "CREATE TABLE IF NOT EXISTS inventories (inventory_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, price INTEGER, quantity_available INTEGER)";

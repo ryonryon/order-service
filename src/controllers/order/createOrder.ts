@@ -2,22 +2,21 @@ import { Request, Response } from "express";
 
 import OrderTable from "../../repositories/orderRepository";
 import {
-  CONNECTION_ERROR,
+  INERNAL_SERVER_ERROR,
   INVALID_ITEM_TYPE_ERROR,
   INVALID_EMAIL_ERROR,
   INVALID_DATE_ERROR,
   INVALID_INVENTORY_ID_ERROR,
-  AVAILABLE_QUANTITY_ERROR,
-  ORDERS,
-  ORDERS_DETAIL
-} from "../../constants";
-import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
+  AVAILABLE_QUANTITY_ERROR
+} from "../../constants/errors";
+import { ORDERS, ORDERS_DETAIL } from "../../constants/tables";
+import { checkType, checkDate, TYPE, checkEmail } from "../validations";
 
 async function createOrder(req: Request, res: Response) {
   const customerEmailAddress = req.body[ORDERS.COSUTOMER_EMAIL_ADDRESS];
   const dateOrderPlaced = req.body[ORDERS.DATE_ORDER_PLACED];
   const orderStatus = req.body[ORDERS.ORDER_STATUS];
-  const orderItems = req.body["details"];
+  const orderItems = req.body[ORDERS.DETAILS];
 
   try {
     checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
@@ -45,7 +44,7 @@ async function createOrder(req: Request, res: Response) {
       res.status(400).send(err.message());
     } else if (err.error_type === AVAILABLE_QUANTITY_ERROR.type) {
       res.status(400).send(err.message());
-    } else res.status(500).send(CONNECTION_ERROR.message());
+    } else res.status(500).send(INERNAL_SERVER_ERROR.message());
   }
 }
 

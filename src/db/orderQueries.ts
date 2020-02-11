@@ -1,5 +1,5 @@
 import { makeSyntaxAndParams } from "./utils";
-import { ORDERS, ORDERS_DETAIL } from "../constants";
+import { ORDERS, ORDERS_DETAIL } from "../constants/tables";
 
 export const qCreateOrderTable = `CREATE TABLE IF NOT EXISTS orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, customer_email_address TEXT, date_order_placed TEXT, order_status TEXT);`;
 

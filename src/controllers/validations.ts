@@ -1,4 +1,4 @@
-import { INVALID_ITEM_TYPE_ERROR, INVALID_EMAIL_ERROR, INVALID_DATE_ERROR } from "./constants";
+import { INVALID_ITEM_TYPE_ERROR, INVALID_EMAIL_ERROR, INVALID_DATE_ERROR } from "../constants/errors";
 
 export function checkType(value: string | number | boolean, valueKey: string, type: TYPE) {
   if (typeof value !== type) {

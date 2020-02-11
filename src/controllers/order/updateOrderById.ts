@@ -6,13 +6,12 @@ import {
   INVALID_ITEM_TYPE_ERROR,
   INVALID_EMAIL_ERROR,
   INVALID_DATE_ERROR,
-  CONNECTION_ERROR,
-  ORDERS,
-  ORDERS_DETAIL,
+  INERNAL_SERVER_ERROR,
   INVALID_INVENTORY_ID_ERROR,
   AVAILABLE_QUANTITY_ERROR
-} from "../../constants";
-import { checkType, checkDate, TYPE, checkEmail } from "../../validations";
+} from "../../constants/errors";
+import { ORDERS, ORDERS_DETAIL } from "../../constants/tables";
+import { checkType, checkDate, TYPE, checkEmail } from "../validations";
 
 async function updateOrderById(req: Request, res: Response) {
   const orderId = Number(req.params.id);
@@ -21,11 +20,11 @@ async function updateOrderById(req: Request, res: Response) {
   const dateOrderPlaced: string | null =
     req.body[ORDERS.DATE_ORDER_PLACED] !== undefined ? req.body[ORDERS.DATE_ORDER_PLACED] : null;
   const orderStatus: string | null = req.body[ORDERS.ORDER_STATUS] !== undefined ? req.body[ORDERS.ORDER_STATUS] : null;
-  const inputOrderDetails: any[] = req.body["details"] !== undefined ? req.body["details"] : null;
+  const inputOrderDetails: any[] = req.body[ORDERS.DETAILS] !== undefined ? req.body[ORDERS.DETAILS] : null;
 
   try {
     const order = await OrderTable.getOrder(orderId);
-    if (order.length === 0) throw INVALID_ORDER_ID_ERROR.type;
+    if (order === null) throw INVALID_ORDER_ID_ERROR.type;
 
     if (customerEmailAddress !== null) {
       checkType(customerEmailAddress, ORDERS.COSUTOMER_EMAIL_ADDRESS, TYPE.STRING);
@@ -72,7 +71,7 @@ async function updateOrderById(req: Request, res: Response) {
       res.status(400).send(err.message);
     } else if (err.error_type === INVALID_DATE_ERROR.type) {
       res.status(400).send(err.message);
-    } else res.status(500).send(CONNECTION_ERROR.message());
+    } else res.status(500).send(INERNAL_SERVER_ERROR.message());
   }
 }
 

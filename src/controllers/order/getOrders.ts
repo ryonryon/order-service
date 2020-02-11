@@ -1,13 +1,16 @@
 import { Request, Response } from "express";
 
 import OrderTable from "../../repositories/orderRepository";
-import { CONNECTION_ERROR } from "../../constants";
+import { INERNAL_SERVER_ERROR } from "../../constants/errors";
+import Order from "../../entities/order";
 
 async function getOrders(_: Request, res: Response) {
   try {
-    res.status(200).send(await OrderTable.getOrders());
+    const orders = await OrderTable.getOrders();
+
+    res.status(200).send(orders.map((order: Order) => order.orderObject));
   } catch (err) {
-    res.status(500).send(CONNECTION_ERROR.message());
+    res.status(500).send(INERNAL_SERVER_ERROR.message());
   }
 }
 
