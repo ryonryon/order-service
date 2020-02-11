@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 
 import InventoryTable from "../../repositories/inventoryRepository";
-import { CONNECTION_ERROR, INVALID_ITEM_TYPE_ERROR, INVENTORIES } from "../../constants";
-import { checkType, TYPE } from "../../validations";
+import { INERNAL_SERVER_ERROR, INVALID_ITEM_TYPE_ERROR } from "../../constants/errors";
+import { INVENTORIES } from "../../constants/tables";
+import { checkType, TYPE } from "../validations";
 
 async function createInventory(req: Request, res: Response) {
   const name = req.body[INVENTORIES.NAME];
@@ -22,7 +23,7 @@ async function createInventory(req: Request, res: Response) {
   } catch (err) {
     if (err.error_type === INVALID_ITEM_TYPE_ERROR.type) {
       res.status(400).send(INVALID_ITEM_TYPE_ERROR.message(err.name, err.type));
-    } else res.status(500).send(CONNECTION_ERROR.message());
+    } else res.status(500).send(INERNAL_SERVER_ERROR.message());
   }
 }
 

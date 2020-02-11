@@ -9,7 +9,7 @@ import {
   qSelectInventoryItem,
   qCreateInvntoryTable
 } from "../db/invnetoryQueries";
-import { INVALID_INVENTORY_ID_ERROR } from "../constants";
+import { INVALID_INVENTORY_ID_ERROR } from "../constants/errors";
 
 class InventoryTable {
   static createInventory(name: String, description: String, price: String, quantityAvailable: String): Promise<void> {

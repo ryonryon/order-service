@@ -17,14 +17,8 @@ import {
   qUpdateOrderItem,
   qDeleteOrder
 } from "../db/orderQueries";
-import {
-  ORDERS,
-  ORDERS_DETAIL,
-  INVENTORIES,
-  INVALID_INVENTORY_ID_ERROR,
-  AVAILABLE_QUANTITY_ERROR,
-  INVALID_ORDER_ID_ERROR
-} from "../constants";
+import { INVALID_INVENTORY_ID_ERROR, AVAILABLE_QUANTITY_ERROR, INVALID_ORDER_ID_ERROR } from "../constants/errors";
+import { ORDERS, ORDERS_DETAIL, INVENTORIES } from "../constants/tables";
 import InventoryTable from "./inventoryRepository";
 
 class OrderTable {
