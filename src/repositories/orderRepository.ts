@@ -100,19 +100,53 @@ class OrderTable {
     });
   }
 
-  static getOrders(): Promise<any[]> {
+  static getOrders(): Promise<Order[]> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
-      db.all(qSelectOrders, (err, orders) => (err ? reject(err) : resolve(orders)))
+      db.all(qSelectOrders, (err, _orders) => {
+        if (err) return reject(err);
+        const orders: Order[] = [];
+        let orderDetails: OrderDetail[] = [];
+
+        let orderId = _orders[0][ORDERS.ORDER_ID];
+        let customerEmailAddress = _orders[0][ORDERS.COSUTOMER_EMAIL_ADDRESS];
+        let dateOrderPlaced = _orders[0][ORDERS.DATE_ORDER_PLACED];
+        let orderStatus = _orders[0][ORDERS.ORDER_STATUS];
+
+        _orders.forEach((_order: any) => {
+          if (orderId !== _order[ORDERS.ORDER_ID]) {
+            orders.push(new Order(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, orderDetails));
+            orderId = _order[ORDERS.ORDER_ID];
+            customerEmailAddress = _order[ORDERS.COSUTOMER_EMAIL_ADDRESS];
+            dateOrderPlaced = _order[ORDERS.DATE_ORDER_PLACED];
+            orderStatus = _order[ORDERS.ORDER_STATUS];
+            orderDetails = [];
+          }
+
+          orderDetails.push(
+            new OrderDetail(
+              _order[ORDERS_DETAIL.ORDER_DETAIL_ID],
+              _order[ORDERS.ORDER_ID],
+              _order[ORDERS_DETAIL.INVNETORY_ID],
+              _order[ORDERS_DETAIL.QUANTITY]
+            )
+          );
+        });
+        orders.push(new Order(orderId, customerEmailAddress, dateOrderPlaced, orderStatus, orderDetails));
+
+        return resolve(orders);
+      })
     );
   }
 
-  static getOrder(id: number): Promise<Order> {
+  static getOrder(id: number): Promise<Order | null> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
       db.all(qSelectOrder, [id], (err, orders) =>
         err
           ? reject(err)
+          : orders.length === 0
+          ? resolve(null)
           : resolve(
               new Order(
                 orders[0][ORDERS.ORDER_ID],
@@ -177,11 +211,11 @@ class OrderTable {
 
         if (orderDetail === undefined) {
           await InventoryTable.updateInventory(
-            inventory.inventoryId,
+            inventory!.inventoryId,
             null,
             null,
             null,
-            inventory.quantityAvailable - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+            inventory!.quantityAvailable - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
           );
 
           await this.insertOrderDetail(
@@ -195,7 +229,9 @@ class OrderTable {
             null,
             null,
             null,
-            inventory.quantityAvailable + orderDetail[ORDERS_DETAIL.QUANTITY] - inputOrderDetail[ORDERS_DETAIL.QUANTITY]
+            inventory!.quantityAvailable +
+              orderDetail[ORDERS_DETAIL.QUANTITY] -
+              inputOrderDetail[ORDERS_DETAIL.QUANTITY]
           );
 
           await this.updateOrderDetail(
@@ -254,7 +290,7 @@ class OrderTable {
         if (order === null) reject(INVALID_ORDER_ID_ERROR.type);
 
         await new Promise(async (resolve, _) => {
-          order.details.forEach(async orderDetail => {
+          order!.details.forEach(async orderDetail => {
             const inventory = await InventoryTable.getInventory(orderDetail.inventoryId);
 
             await InventoryTable.updateInventory(
@@ -262,7 +298,7 @@ class OrderTable {
               null,
               null,
               null,
-              inventory.quantityAvailable + orderDetail.quantity
+              inventory!.quantityAvailable + orderDetail.quantity
             );
           });
           resolve();

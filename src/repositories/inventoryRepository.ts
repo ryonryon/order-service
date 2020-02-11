@@ -43,12 +43,14 @@ class InventoryTable {
     );
   }
 
-  static getInventory(id: number): Promise<Inventory> {
+  static getInventory(id: number): Promise<Inventory | null> {
     const db = dBSqlite3();
     return new Promise((resolve, reject) =>
       db.get(qSelectInventoryItem, [id], (err: Error | null, row: any) => {
         err
           ? reject(err)
+          : row === null
+          ? resolve(null)
           : resolve(new Inventory(row.inventory_id, row.name, row.description, row.price, row.quantity_available));
       })
     );
